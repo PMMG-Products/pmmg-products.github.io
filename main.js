@@ -158,6 +158,7 @@ function generateTopProdGraph(container, prodData, month, metric)
 					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
 				},
 				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
+				range: [0, null],
 				gridcolor: '#323232'
 			},
 			plot_bgcolor: '#252525',
@@ -223,6 +224,7 @@ function generateTopCompanyGraph(container, companyData, knownCompanies, month, 
 					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
 				},
 				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
+				range: [0, null],
 				gridcolor: '#323232'
 			},
 			plot_bgcolor: '#252525',
