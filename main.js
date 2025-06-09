@@ -190,8 +190,8 @@ function generateTopCompanyGraph(container, companyData, knownCompanies, month, 
 	
 	const companyNames = [];
 	
-	// Print unknown top 30 companies
-	companyIDs.slice(0,30).forEach(id => {
+	// Print unknown top 40 companies
+	companyIDs.slice(0,40).forEach(id => {
 		if(!knownCompanies[id])
 		{
 			console.log(id)
