@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrUn Financial Reports</title>
+	<link rel="stylesheet" href="styles.css">
+	<script src="main.js"></script>
+	<script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+<div class="topTabContainer">
+	<div class="topTab">
+		<a class="topTabLink">Stats</a>
+		<div class="toggleIndicator toggleIndicatorActive"></div>
+	</div>
+	<div class="topTab">
+		<a class="topTabLink" href="https://github.com/PMMG-Products/PrUnEconomicReports">GitHub</a>
+		<div class="toggleIndicator"></div>
+	</div>
+</div>
+
+<div class="mainContainer">
+	<div class="plotSelectorContainer" id="graphTypeContainer">
+		<label>
+			Graph: 
+			<select class="plotSelector" id="graphType">
+				<option value="topProduction">Top Production</option>
+				<option value="topCompanies">Top Companies</option>
+				<option value="matHistory">MAT History</option>
+			</select>
+		</label>
+	</div>
+	<div class="selectorSubtypes" id="selectorSubtypes">
+
+	</div>
+	<div class="mainPlot" id="mainPlotContainer">
+		<div id="mainPlot"></div>
+	</div>
+</div>
+
+</body>
+</html>

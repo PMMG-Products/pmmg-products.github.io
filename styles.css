@@ -1,0 +1,84 @@
+body {
+    background-color: #1E1E1E;
+	font-family: "Droid Sans", sans-serif;
+	font-size: 14px;
+	margin: 0px;
+	color: rgb(153, 153, 153);
+}
+.topTabContainer {
+	display: flex;
+	margin: 1px;
+}
+.topTab {
+	background-color: #252525;
+	margin: 1px;
+	cursor: pointer;
+}
+.topTabLink {
+	color: rgb(153, 153, 153);
+	padding: 4px 4px 2px 4px;
+    text-decoration: none;
+}
+.topTabLink:hover {
+	color: #eee;
+	transition: color 0.2s ease;
+}
+
+.toggleIndicator {
+	background-color: rgba(247, 166, 0, 0.15);
+	width: 100%;
+	height: 2px;
+}
+.toggleIndicatorActive {
+	background-color: rgb(247, 166, 0);
+	-webkit-box-shadow: 0 0 6px 0 #f7a600;
+    -moz-box-shadow: 0 0 6px 0 #f7a600;
+    box-shadow: 0 0 6px 0 #f7a600;
+}
+.plotly-notifier {
+    display: none;
+}
+
+.selectorSubtypes {
+	display: block;
+}
+
+.selectorSubtypes div {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	margin-top: 10px;
+}
+
+.plotSelectorContainer {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	margin-top: 10px;
+}
+
+.plotSelector {
+	color: #bbb;
+	background-color: #42361d;
+	border: none;
+	border-bottom: 1px solid #8d6411;
+	cursor: pointer;
+}
+.plotSelector:focus {
+	outline: none;
+}
+
+.mainPlot {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	margin-top: 10px;
+}
+
+select {
+	width: 113px;
+}
+
+input {
+	width: 113px;
+}
