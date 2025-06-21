@@ -4,11 +4,11 @@ window.onload = function() {
 	
 	graphTypeSelector.addEventListener("change", function() {
 		updateSelectors(graphTypeSelector, selectorSubtypes);
-		switchPlot(graphTypeSelector);
+		switchPlot();
 	});
 	
 	updateSelectors(graphTypeSelector, selectorSubtypes);
-	switchPlot(graphTypeSelector);
+	switchPlot();
 };
 
 // Update selectors based on graph type
@@ -18,23 +18,125 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 	
 	if(graphTypeSelector.value == "topProduction" || graphTypeSelector.value == "topCompanies")
 	{
-		selectorSubtypes.appendChild(addInput(graphTypeSelector, 'select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
 		
-		selectorSubtypes.appendChild(addInput(graphTypeSelector, 'select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]]));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]], "may25"));
 	}
 	else if(graphTypeSelector.value == "matHistory")
 	{
-		selectorSubtypes.appendChild(addInput(graphTypeSelector, 'select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Amount', 'Price'], ['volume', 'profit', 'amount', 'price']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Amount', 'Price'], ['volume', 'profit', 'amount', 'price']]));
 		
-		selectorSubtypes.appendChild(addInput(graphTypeSelector, 'input', 'mat', 'Ticker: '));
+		selectorSubtypes.appendChild(addInput('input', 'mat', 'Ticker: '));
+	}
+	else if(graphTypeSelector.value == "compTotals")
+	{
+		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Pie', 'Bar'], ['pie', 'bar']]);
+		chartTypeElem.style.marginLeft = "-30px";
+		selectorSubtypes.appendChild(chartTypeElem);
+		
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Rank'], ['volume', 'profit', 'rank']]));
+		
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]], "may25"));
+		
+		// Username input and query button
+		const usernameInput = addInput('input', 'username', 'Username: ');
+		
+		const submitButton = document.createElement("button");
+		submitButton.textContent = "Query";
+		submitButton.classList.add("queryButton");
+		usernameInput.appendChild(submitButton);
+		
+		submitButton.addEventListener('click', getCompanyInfo);
+		
+		usernameInput.style.marginLeft = "33px";
+		
+		selectorSubtypes.appendChild(usernameInput);
+		
+		// Hidden company ID input, autofilled by query
+		const companyIDInput = addInput('input', 'companyID', 'Company ID: ');
+		companyIDInput.style.visibility = 'hidden';
+		
+		selectorSubtypes.appendChild(companyIDInput);
+		
+		const companyNameInput = addInput('input', 'companyName', 'Company Name: ');
+		companyNameInput.style.visibility = 'hidden';
+		
+		selectorSubtypes.appendChild(companyNameInput);
+		
+	}
+	else if(graphTypeSelector.value == "compHistory")
+	{
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
+		
+		// Username input and query button
+		const usernameInput = addInput('input', 'username', 'Username: ');
+		
+		const submitButton = document.createElement("button");
+		submitButton.textContent = "Query";
+		submitButton.classList.add("queryButton");
+		usernameInput.appendChild(submitButton);
+		
+		submitButton.addEventListener('click', getCompanyInfo);
+		
+		usernameInput.style.marginLeft = "33px";
+		
+		selectorSubtypes.appendChild(usernameInput);
+		
+		// Hidden company ID input, autofilled by query
+		const companyIDInput = addInput('input', 'companyID', 'Company ID: ');
+		companyIDInput.style.visibility = 'hidden';
+		
+		selectorSubtypes.appendChild(companyIDInput);
+		
+		const companyNameInput = addInput('input', 'companyName', 'Company Name: ');
+		companyNameInput.style.visibility = 'hidden';
+		
+		selectorSubtypes.appendChild(companyNameInput);
+	}
+	else if(graphTypeSelector.value == "compRank")
+	{
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]], "may25"));
+		
+		// Username input and query button
+		const usernameInput = addInput('input', 'username', 'Username: ');
+		
+		const submitButton = document.createElement("button");
+		submitButton.textContent = "Query";
+		submitButton.classList.add("queryButton");
+		usernameInput.appendChild(submitButton);
+		
+		submitButton.addEventListener('click', getCompanyInfo);
+		
+		usernameInput.style.marginLeft = "33px";
+		
+		selectorSubtypes.appendChild(usernameInput);
+		
+		// Hidden company ID input, autofilled by query
+		const companyIDInput = addInput('input', 'companyID', 'Company ID: ');
+		companyIDInput.style.visibility = 'hidden';
+		
+		selectorSubtypes.appendChild(companyIDInput);
+		
+		const companyNameInput = addInput('input', 'companyName', 'Company Name: ');
+		companyNameInput.style.visibility = 'hidden';
+		
+		selectorSubtypes.appendChild(companyNameInput);
+		
 	}
 }
 
-function switchPlot(typeElem)
+function switchPlot()
 {
+	const typeElem = document.getElementById("graphType");
+	
+	var subtypeElem;
 	var monthElem;
 	var metricElem;
 	var matElem;
+	var nameElem;
+	var idElem;
+	
+	const months = ['mar25', 'apr25', 'may25'];	// Automate this later
 	
 	const oldGraph = document.getElementById("mainPlot");
 	oldGraph.remove();
@@ -57,9 +159,84 @@ function switchPlot(typeElem)
 		case "matHistory":
 			metricElem = document.getElementById("metric");
 			matElem = document.getElementById("mat");
-			promiseGenerateMatGraph("mainPlot", matElem.value, metricElem.value);
+			promiseGenerateMatGraph("mainPlot", matElem.value, metricElem.value, months);
 			break;
+		case "compTotals":
+			subtypeElem = document.getElementById("chartType");
+			metricElem = document.getElementById("metric");
+			monthElem = document.getElementById("month");
+			nameElem = document.getElementById("companyName");
+			idElem = document.getElementById("companyID");
+			promiseGenerateCompanyGraph("mainPlot", subtypeElem.value, nameElem.value, idElem.value, monthElem.value, metricElem.value);
+			break;
+		case "compHistory":
+			metricElem = document.getElementById("metric");
+			nameElem = document.getElementById("companyName");
+			idElem = document.getElementById("companyID");
+			promiseGenerateCompanyHistoryGraph("mainPlot", nameElem.value, idElem.value, metricElem.value, months);
+			break;
+		case "compRank":
+			monthElem = document.getElementById("month");
+			nameElem = document.getElementById("companyName");
+			idElem = document.getElementById("companyID");
+			promiseGenerateRankChart("mainPlot", nameElem.value, idElem.value, monthElem.value, months);
 	}
+}
+
+function promiseGenerateRankChart(container, companyName, companyID, currentMonth, months)
+{
+	const monthIndex = months.indexOf(currentMonth);
+	const prevMonth = months[monthIndex == 0 ? 0 : monthIndex - 1];	// Get previous month to determine change
+	
+	fetch('data/company-data-' + currentMonth + '.json?cb=' + Date.now())
+    .then(response => response.json())  // Parse JSON data
+    .then(currentData => {
+		fetch('data/company-data-' + prevMonth + '.json?cb=' + Date.now())
+		.then(response => response.json())
+		.then(prevData => {
+			generateRankChart(container, currentData.individual[companyID], (monthIndex == 0 ? undefined : prevData.individual[companyID]), companyName, currentMonth);  // Use the JSON data
+		});
+    });
+}
+
+function promiseGenerateCompanyHistoryGraph(container, companyName, companyID, metric, months)	// Metric is either 'profit' or 'volume'
+{
+	if(!companyID){return;}
+	const validMonths = [];
+	
+	// Get data
+	const fetches = months.map(month => 
+		fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(res => res.json()).then(json => ({ "month": month, "monthData": json }))
+	);
+	
+	Promise.all(fetches).then(rawData => {
+		const data = []
+		var hasData = false;
+		
+		rawData.forEach(({month, monthData}) => {
+			const dataPoint = monthData.totals[companyID]
+			if(dataPoint)
+			{
+				data.push(dataPoint[metric])
+				validMonths.push(month);
+				hasData = true;
+			}
+		});
+		
+		if(hasData)
+		{
+			generateCompanyHistoryGraph(container, months.map(month => prettyMonthName(month)), data, companyName, metric)
+		}
+	});
+}
+
+function promiseGenerateCompanyGraph(container, chartType, companyName, companyID, month, metric)	// Metric is either 'profit' or 'volume'. chartType is either 'bar' or 'pie'
+{
+	fetch('data/company-data-' + month + '.json?cb=' + Date.now())
+    .then(response => response.json())  // Parse JSON data
+    .then(data => {
+		generateCompanyGraph(container, chartType, data.individual[companyID], companyName, month, metric);  // Use the JSON data
+    });
 }
 
 function promiseGenerateTopCompanyGraph(container, month, metric)	// Metric is either 'profit' or 'volume'
@@ -84,22 +261,23 @@ function promiseGenerateTopProdGraph(container, month, metric)	// Metric is eith
     });
 }
 
-function promiseGenerateMatGraph(container, ticker, metric)	// Metric is either 'profit', 'volume', or 'amount'
+function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is either 'profit', 'volume', or 'amount'
 {
 	// Validation/sanitizing
 	if(!ticker){return;}
 	ticker = ticker.toUpperCase();
 	
+	const validMonths = [];
+	
 	// Get data
-	const months = ['mar25', 'apr25', 'may25']
 	const fetches = months.map(month => 
-		fetch('data/prod-data-' + month + '.json?cb=' + Date.now()).then(res => res.json())
+		fetch('data/prod-data-' + month + '.json?cb=' + Date.now()).then(res => res.json()).then(json => ({ "month": month, "monthData": json }))
 	);
 	
 	Promise.all(fetches).then(rawData => {
 		const data = []
 		var hasData = false;
-		rawData.forEach(monthData => {
+		rawData.forEach(({month, monthData}) => {
 			const dataPoint = monthData[ticker]
 			if(dataPoint)
 			{
@@ -111,13 +289,14 @@ function promiseGenerateMatGraph(container, ticker, metric)	// Metric is either 
 				{
 					data.push(dataPoint[metric])
 				}
+				validMonths.push(month)
 				hasData = true;
 			}
 		});
 		
 		if(hasData)
 		{
-			generateMatGraph(container, months.map(month => prettyMonthName(month)), data, ticker, metric)
+			generateMatGraph(container, validMonths.map(month => prettyMonthName(month)), data, ticker, metric)
 		}
 	});
 }
@@ -291,6 +470,227 @@ function generateMatGraph(container, months, data, ticker, metric)
     });
 }
 
+function generateCompanyGraph(container, chartType, data, companyName, month, metric)
+{
+	if(!data){return;}
+	
+	const titles = {
+		'profit': 'Production Profit Breakdown of ',
+		'volume': 'Production Volume Breakdown of ',
+	}
+	
+	var mats = Object.keys(data);
+	var values = mats.map(ticker => data[ticker][metric]);
+	
+	var indices = values.map((_, i) => i).sort((a, b) => values[b] - values[a]);
+	mats = indices.map(i => mats[i]);
+	values = indices.map(i => values[i]);
+	
+	if(chartType == 'pie')
+	{
+		// Filter out negative values
+		indices = values
+			.map((v, i) => i)
+			.filter(i => values[i] >= 0);
+		mats = indices.map(i => mats[i]);
+		values = indices.map(i => values[i]);
+		
+		Plotly.newPlot(container, {
+			data: [{ labels: mats, values: values, type: 'pie', textinfo: 'label',textposition: 'inside', insidetextorientation: 'none', automargin: false, hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percent}<extra></extra>'}],
+			layout: { width: 800, height: 400, 
+				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
+						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
+				},
+				plot_bgcolor: '#252525',
+				paper_bgcolor: '#252525',
+			},
+			config: {
+				displayModeBar: true,
+				modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
+				displaylogo: false,
+				scrollZoom: true
+			}
+		});
+	}
+	else
+	{
+		Plotly.newPlot(container, {
+			data: [{ x: mats, y: values, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
+			layout: { width: 800, height: 400, 
+				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
+						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
+				},
+				xaxis: {
+					title: {
+						text: 'Ticker',
+						font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
+					},
+					tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
+					range: [-0.5, Math.min(mats.length, 30) - 0.5],
+					tickangle: -45
+				},
+				yaxis: {
+					title: {
+						text: prettyModeNames[metric] + ' [$/day]',
+						font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
+					},
+					tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
+					range: [0, null],
+					gridcolor: '#323232'
+				},
+				plot_bgcolor: '#252525',
+				paper_bgcolor: '#252525',
+				dragmode: 'pan'
+			},
+			config: {
+				displayModeBar: true,
+				modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
+				displaylogo: false,
+				scrollZoom: true
+			}
+		});
+	}
+}
+
+function generateCompanyHistoryGraph(container, months, data, companyName, metric)
+{
+	const titles = {
+		'profit': 'Production Profit History of ',
+		'volume': 'Production Volume History of ',
+	}
+	const yAxis = {
+		'profit': 'Daily Profit [$/day]',
+		'volume': 'Daily Volume [$/day]'
+	}
+	
+	Plotly.newPlot(container, {
+        data: [{ x: months, y: data, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
+        layout: { width: 800, height: 400, 
+			title: {text: titles[metric] + companyName,
+					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
+			},
+			xaxis: {
+				title: {
+					text: 'Month',
+					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
+				},
+				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
+				tickangle: -45
+			},
+			yaxis: {
+				title: {
+					text: yAxis[metric],
+					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
+				},
+				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
+				gridcolor: '#323232'
+			},
+			plot_bgcolor: '#252525',
+			paper_bgcolor: '#252525',
+			dragmode: 'pan'
+		},
+		config: {
+			displayModeBar: true,
+			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
+			displaylogo: false,
+			scrollZoom: true
+		}
+    });
+}
+
+function generateRankChart(containerID, currentData, prevData, companyName, currentMonth)
+{
+	if(!currentData){return;}
+		
+	const container = document.getElementById(containerID);
+	
+	const tickers = Object.keys(currentData);
+	const currentRanks = tickers.map(ticker => ({'ticker': ticker, 'currentRank': currentData[ticker].rank, 'data': currentData[ticker]}));
+	
+	currentRanks.forEach(mat => {
+		if(prevData && prevData[mat.ticker])
+		{
+			mat.prevRank = prevData[mat.ticker].rank;
+		}
+	});
+	
+	currentRanks.sort((x, y) => x.currentRank - y.currentRank);
+	
+	// Create title
+	const title = document.createElement("div");
+	title.textContent = "Production Ranking of " + companyName + " - " + prettyMonthName(currentMonth);
+	title.classList.add("title");
+	container.appendChild(title);
+	
+	// Start creating table
+	const table = document.createElement("table");
+	container.appendChild(table);
+	
+	// Table header
+	const header = document.createElement("thead");
+	table.appendChild(header);
+	const headRow = document.createElement("tr");
+	header.appendChild(headRow);
+	
+	const headers = ["Rank", "Ticker", "Amount [/day]", "Volume [$/day]", "Profit [$/day]"]
+	headers.forEach(label => {
+		const headerColumn = document.createElement("th");
+		headerColumn.textContent = label;
+		headRow.appendChild(headerColumn);
+	});
+	
+	const body = document.createElement("tbody");
+	table.appendChild(body);
+	
+	currentRanks.forEach(mat =>
+	{
+		const row = document.createElement("tr");
+		body.appendChild(row);
+		
+		const rankColumn = document.createElement("td");
+		const rankWrapper = document.createElement("div");
+		rankWrapper.style.display = "flex";
+		rankColumn.appendChild(rankWrapper);
+		
+		if(prevData)
+		{
+			const rankSymbol = document.createElement("div");
+			rankSymbol.style.width = "14px";
+			rankSymbol.style.minWidth = "14px";
+			rankSymbol.style.marginRight = "2px";
+			if(mat.prevRank && mat.prevRank != mat.currentRank)
+			{
+				const increasing = mat.prevRank && mat.prevRank < mat.currentRank;
+				rankSymbol.textContent = increasing ? "▼" : "▲";
+				rankSymbol.style.color = increasing ? "#d9534f" : "#5cb85c";
+			}
+			rankWrapper.appendChild(rankSymbol);
+		}
+		
+		const rankNum = document.createElement("div");
+		rankNum.textContent = mat.currentRank;
+		rankWrapper.appendChild(rankNum);
+		
+		row.appendChild(rankColumn);
+		
+		const tickerColumn = document.createElement("td")
+		tickerColumn.textContent = mat.ticker;
+		row.appendChild(tickerColumn);
+		
+		const amountColumn = document.createElement("td")
+		amountColumn.textContent = mat.data.amount.toLocaleString();
+		row.appendChild(amountColumn);
+		
+		const volumeColumn = document.createElement("td")
+		volumeColumn.textContent = "$" + mat.data.volume.toLocaleString(undefined, {notation: 'compact', maxixmumSignificantDigits: 3});
+		row.appendChild(volumeColumn);
+		
+		const profitColumn = document.createElement("td")
+		profitColumn.textContent = "$" + mat.data.profit.toLocaleString(undefined, {notation: 'compact', maxixmumSignificantDigits: 3});
+		row.appendChild(profitColumn);
+	});
+}
+
 // Util functions
 function prettyMonthName(monthStr)
 {
@@ -332,7 +732,7 @@ function wrapInDiv(elem)	// Wrap selector element in a div to center it and give
 	return div;
 }
 
-function addInput(graphTypeSelector, inputType, id, label, values)
+function addInput(inputType, id, label, values, defaultValue)
 {
 	const labelElem = document.createElement('label');
 	labelElem.textContent = label;
@@ -343,15 +743,43 @@ function addInput(graphTypeSelector, inputType, id, label, values)
 	if(inputType == 'select')
 	{
 		addOptions(inputElem, values[0], values[1]);
+		if(defaultValue)
+		{
+			inputElem.value = defaultValue;
+		}
 	}
 	
 	inputElem.addEventListener("change", function() {
-		switchPlot(graphTypeSelector);
+		switchPlot();
 	});
 	
 	labelElem.appendChild(inputElem);
 	
 	return wrapInDiv(labelElem);
+}
+
+async function getCompanyInfo()
+{
+	const usernameInput = document.getElementById('username');
+	
+	if(!usernameInput.value){return;}
+	
+	fetch('https://rest.fnar.net/user/' + usernameInput.value)
+	  .then(response => response.json())
+	  .then(data => {
+			const companyID = data.CompanyId;
+			const companyName = data.UserName;
+			if(!companyID || !companyName){return;}
+			
+			const companyIDInput = document.getElementById('companyID');
+			companyIDInput.value = companyID;
+			
+			const companyNameInput = document.getElementById('companyName');
+			companyNameInput.value = companyName;
+			
+			switchPlot();
+	  })
+	  .catch(error => {alert('Bad Response: Check Username'); console.error(error)});
 }
 
 const fullMonthNames = {
