@@ -34,7 +34,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 		chartTypeElem.style.marginLeft = "-30px";
 		selectorSubtypes.appendChild(chartTypeElem);
 		
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Rank'], ['volume', 'profit', 'rank']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
 		
 		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]], "may25"));
 		
