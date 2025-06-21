@@ -678,7 +678,7 @@ function generateRankChart(containerID, currentData, prevData, companyName, curr
 		row.appendChild(tickerColumn);
 		
 		const amountColumn = document.createElement("td")
-		amountColumn.textContent = mat.data.amount.toLocaleString();
+		amountColumn.textContent = mat.data.amount.toLocaleString(undefined, {maximumFractionDigits: 1});
 		row.appendChild(amountColumn);
 		
 		const volumeColumn = document.createElement("td")
