@@ -14,17 +14,26 @@ window.onload = function() {
 // Update selectors based on graph type
 function updateSelectors(graphTypeSelector, selectorSubtypes)
 {
+	const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025"];
+	const months = ["mar25", "apr25", "may25", "jun25"];
+	const currentMonth = "jun25";
 	clearChildren(selectorSubtypes);
 	
-	if(graphTypeSelector.value == "topProduction" || graphTypeSelector.value == "topCompanies")
+	if(graphTypeSelector.value == "topProduction")
+	{
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Deficit'], ['volume', 'profit', 'deficit']]));
+		
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
+	}
+	else if(graphTypeSelector.value == "topCompanies")
 	{
 		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
 		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]], "may25"));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
 	}
 	else if(graphTypeSelector.value == "matHistory")
 	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Amount', 'Price'], ['volume', 'profit', 'amount', 'price']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Price', 'Produced', 'Consumption', 'Surplus'], ['volume', 'profit', 'price', 'amount', 'consumed', 'surplus']]));
 		
 		selectorSubtypes.appendChild(addInput('input', 'mat', 'Ticker: '));
 	}
@@ -36,7 +45,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 		
 		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
 		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]], "may25"));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
 		
 		// Username input and query button
 		const usernameInput = addInput('input', 'username', 'Username: ');
@@ -95,7 +104,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 	}
 	else if(graphTypeSelector.value == "compRank")
 	{
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [["March 3025", "April 3025", "May 3025"], ["mar25", "apr25", "may25"]], "may25"));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
 		
 		// Username input and query button
 		const usernameInput = addInput('input', 'username', 'Username: ');
@@ -136,7 +145,7 @@ function switchPlot()
 	var nameElem;
 	var idElem;
 	
-	const months = ['mar25', 'apr25', 'may25'];	// Automate this later
+	const months = ['mar25', 'apr25', 'may25', 'jun25'];	// Automate this later
 	
 	const oldGraph = document.getElementById("mainPlot");
 	oldGraph.remove();
@@ -257,6 +266,13 @@ function promiseGenerateTopProdGraph(container, month, metric)	// Metric is eith
 	fetch('data/prod-data-' + month + '.json?cb=' + Date.now())
     .then(response => response.json())  // Parse JSON data
     .then(data => {
+		if(metric == 'deficit')	// Populate deficit into data
+		{
+			Object.keys(data).forEach(ticker => {
+				if(!data[ticker]['amount'] || data[ticker]['amount'] == 0){data[ticker]['deficit'] = 0; return;}
+				data[ticker]['deficit'] = (data[ticker]['amount'] - (data[ticker]['consumed'] || 0)) * data[ticker]['volume'] / data[ticker]['amount'];
+			});
+		}
 		generateTopProdGraph(container, data, month, metric);  // Use the JSON data
     });
 }
@@ -285,6 +301,10 @@ function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is
 				{
 					data.push(dataPoint['amount'] == 0 ? 0 : dataPoint['volume'] / dataPoint['amount']);
 				}
+				else if(metric == 'surplus')
+				{
+					data.push(dataPoint['amount'] - dataPoint['consumed'])
+				}
 				else
 				{
 					data.push(dataPoint[metric])
@@ -303,6 +323,12 @@ function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is
 
 function generateTopProdGraph(container, prodData, month, metric)
 {
+	
+	const titles = {
+		'profit': 'Profit Materials',
+		'volume': 'Production Volumes',
+		'deficit': 'Deficits'
+	}
 	// Convert the data object into an array of [ticker, volume] pairs
 	const volumeArray = Object.entries(prodData).map(([ticker, info]) => ({
 		ticker,
@@ -310,7 +336,16 @@ function generateTopProdGraph(container, prodData, month, metric)
 	}));
 
 	// Sort the array by volume in descending order
-	volumeArray.sort((a, b) => b.volume - a.volume);
+	if(metric == 'deficit')
+	{
+		volumeArray.sort((a, b) => a.volume - b.volume);
+	}
+	else
+	{
+		volumeArray.sort((a, b) => b.volume - a.volume);
+	}
+	
+	console.log(volumeArray);
 	
 	// Extract tickers and volumes into separate arrays
 	const tickers = volumeArray.map(item => item.ticker);
@@ -318,8 +353,8 @@ function generateTopProdGraph(container, prodData, month, metric)
 	
 	Plotly.newPlot(container, {
         data: [{ x: tickers, y: volumes, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: 800, height: 400, 
-			title: {text: 'Top ' + (metric == 'profit' ? 'Profit Materials - ' : 'Production Volumes - ') + prettyMonthName(month),
+        layout: {width: 800, height: 400,
+			title: {text: 'Top ' + titles[metric] + ' - ' + prettyMonthName(month),
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
 			xaxis: {
@@ -337,7 +372,7 @@ function generateTopProdGraph(container, prodData, month, metric)
 					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
 				},
 				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				range: [0, null],
+				range: [(metric == 'deficit' ? null : 0), (metric == 'deficit' ? 0 : null)],
 				gridcolor: '#323232'
 			},
 			plot_bgcolor: '#252525',
@@ -426,13 +461,17 @@ function generateMatGraph(container, months, data, ticker, metric)
 		'profit': 'Production Profit History of ',
 		'volume': 'Production Volume History of ',
 		'amount': 'Production Amount History of ',
-		'price': 'Price History of '
+		'price': 'Price History of ',
+		'consumed': 'Consumption History of ',
+		'surplus': 'Surplus Production History of '
 	}
 	const yAxis = {
 		'profit': 'Daily Profit [$/day]',
 		'volume': 'Daily Volume [$/day]',
 		'amount': 'Daily Production [per day]',
-		'price': 'Price [$]'
+		'price': 'Price [$]',
+		'consumed': 'Daily Consumption [per day]',
+		'surplus': 'Daily Surplus [per day]'
 	}
 	
 	Plotly.newPlot(container, {

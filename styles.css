@@ -74,6 +74,10 @@ body {
 	margin-top: 10px;
 }
 
+.plot-container {
+	width: auto !important;
+}
+
 .queryButton {
 	background-color: #f7a600;
 	display: inline-block;
