@@ -39,7 +39,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 	}
 	else if(graphTypeSelector.value == "compTotals")
 	{
-		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Treemap', 'Treemap (categories)', 'Pie', 'Bar'], ['treemap', 'treemap-categories', 'pie', 'bar']]);
+		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Bar', 'Pie', 'Treemap (Mat)', 'Treemap (Cat)'], ['bar', 'pie', 'treemap', 'treemap-categories']]);
 		chartTypeElem.style.marginLeft = "-30px";
 		selectorSubtypes.appendChild(chartTypeElem);
 		
@@ -345,7 +345,6 @@ function generateTopProdGraph(container, prodData, month, metric)
 		volumeArray.sort((a, b) => b.volume - a.volume);
 	}
 	
-	console.log(volumeArray);
 	
 	// Extract tickers and volumes into separate arrays
 	const tickers = volumeArray.map(item => item.ticker);

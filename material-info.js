@@ -1,5 +1,5 @@
 var materialCategories = {
-	'consumables (luxury)': [
+	'Consumables (Luxury)': [
 		'ALE',
 		'COF',
 		'GIN',
@@ -11,7 +11,7 @@ var materialCategories = {
 		'VG',
 		'WIN'
 	],
-	'ship engines': [
+	'Ship Engines': [
 		'AEN',
 		'AFP',
 		'AFR',
@@ -39,7 +39,7 @@ var materialCategories = {
 		'RCT',
 		'SFE'
 	],
-	'software tools': [
+	'Software Tools': [
 		'DA',
 		'DD',
 		'DV',
@@ -47,7 +47,7 @@ var materialCategories = {
 		'NN',
 		'OS'
 	],
-	'construction parts': [
+	'Construction Parts': [
 		'AEF',
 		'AIR',
 		'DEC',
@@ -65,7 +65,7 @@ var materialCategories = {
 		'TRU',
 		'TSH'
 	],
-	'alloys': [
+	'Alloys': [
 		'AST',
 		'BGO',
 		'BOS',
@@ -75,14 +75,14 @@ var materialCategories = {
 		'RGO',
 		'WAL'
 	],
-	'consumable bundles': [
+	'Consumable Bundles': [
 		'CBU',
 		'EBU',
 		'PBU',
 		'SBU',
 		'TBU'
 	],
-	'medical equipment': [
+	'Medical Equipment': [
 		'ADR',
 		'BND',
 		'PK',
@@ -90,7 +90,7 @@ var materialCategories = {
 		'STR',
 		'TUB'
 	],
-	'electronic parts': [
+	'Electronic Parts': [
 		'CD',
 		'DIS',
 		'FAN',
@@ -103,7 +103,7 @@ var materialCategories = {
 		'TPU',
 		'TRA'
 	],
-	'energy systems': [
+	'Energy Systems': [
 		'CBL',
 		'CBM',
 		'CBS',
@@ -111,7 +111,7 @@ var materialCategories = {
 		'SOL',
 		'SP'
 	],
-	'minerals': [
+	'Minerals': [
 		'BER',
 		'BOR',
 		'BRM',
@@ -127,7 +127,7 @@ var materialCategories = {
 		'TS',
 		'ZIR'
 	],
-	'construction materials': [
+	'Construction Materials': [
 		'CMK',
 		'EPO',
 		'GL',
@@ -140,7 +140,7 @@ var materialCategories = {
 		'RG',
 		'SEA'
 	],
-	'consumables (basic)': [
+	'Consumables (Basic)': [
 		'DW',
 		'EXO',
 		'FIM',
@@ -156,13 +156,13 @@ var materialCategories = {
 		'SCN',
 		'WS'
 	],
-	'software systems': [
+	'Software Systems': [
 		'IDC',
 		'IMM',
 		'SNM',
 		'WAI'
 	],
-	'electronic pieces': [
+	'Electronic Pieces': [
 		'BCO',
 		'BGC',
 		'CAP',
@@ -174,7 +174,7 @@ var materialCategories = {
 		'SWF',
 		'TRN'
 	],
-	'software components': [
+	'Software Components': [
 		'BAI',
 		'LD',
 		'MLI',
@@ -183,7 +183,7 @@ var materialCategories = {
 		'SAL',
 		'WM'
 	],
-	'ores': [
+	'Ores': [
 		'ALO',
 		'AUO',
 		'CUO',
@@ -192,7 +192,7 @@ var materialCategories = {
 		'SIO',
 		'TIO'
 	],
-	'unit prefabs': [
+	'Unit Prefabs': [
 		'BR1',
 		'BR2',
 		'BRS',
@@ -210,7 +210,7 @@ var materialCategories = {
 		'TCU',
 		'WOR'
 	],
-	'ship shields': [
+	'Ship Shields': [
 		'APT',
 		'ARP',
 		'AWH',
@@ -219,7 +219,7 @@ var materialCategories = {
 		'BWH',
 		'SRP'
 	],
-	'electronic devices': [
+	'Electronic Devices': [
 		'AAR',
 		'AWF',
 		'BID',
@@ -233,7 +233,7 @@ var materialCategories = {
 		'RAD',
 		'SAR'
 	],
-	'metals': [
+	'Metals': [
 		'AL',
 		'AU',
 		'CU',
@@ -244,7 +244,7 @@ var materialCategories = {
 		'TI',
 		'W'
 	],
-	'electronic systems': [
+	'Electronic Systems': [
 		'ACS',
 		'ADS',
 		'CC',
@@ -257,7 +257,7 @@ var materialCategories = {
 		'TAC',
 		'WR'
 	],
-	'textiles': [
+	'Textiles': [
 		'CF',
 		'COT',
 		'CTF',
@@ -266,7 +266,7 @@ var materialCategories = {
 		'SIL',
 		'TK'
 	],
-	'plastics': [
+	'Plastics': [
 		'DCL',
 		'DCM',
 		'DCS',
@@ -276,7 +276,7 @@ var materialCategories = {
 		'PSM',
 		'PSS'
 	],
-	'chemicals': [
+	'Chemicals': [
 		'BAC',
 		'BL',
 		'BLE',
@@ -298,7 +298,7 @@ var materialCategories = {
 		'TCL',
 		'THF'
 	],
-	'elements': [
+	'Elements': [
 		'BE',
 		'C',
 		'CA',
@@ -312,7 +312,7 @@ var materialCategories = {
 		'TC',
 		'ZR'
 	],
-	'gases': [
+	'Gases': [
 		'AMM',
 		'AR',
 		'F',
@@ -323,7 +323,7 @@ var materialCategories = {
 		'NE',
 		'O'
 	],
-	'ship parts': [
+	'Ship Parts': [
 		'AGS',
 		'AHP',
 		'ATP',
@@ -337,7 +337,7 @@ var materialCategories = {
 		'SSC',
 		'THP'
 	],
-	'drones': [
+	'Drones': [
 		'CCD',
 		'DCH',
 		'DRF',
@@ -346,7 +346,7 @@ var materialCategories = {
 		'SRD',
 		'SUD'
 	],
-	'agricultural products': [
+	'Agricultural Products': [
 		'ALG',
 		'BEA',
 		'CAF',
@@ -367,7 +367,7 @@ var materialCategories = {
 		'VEG',
 		'VIT'
 	],
-	'construction prefabs': [
+	'Construction Prefabs': [
 		'ABH',
 		'ADE',
 		'ASE',
@@ -386,11 +386,11 @@ var materialCategories = {
 		'RSE',
 		'RTA'
 	],
-	'fuels': [
+	'Fuels': [
 		'FF',
 		'SF'
 	],
-	'ship kits': [
+	'Ship Kits': [
 		'HCB',
 		'LCB',
 		'LFL',
@@ -406,13 +406,13 @@ var materialCategories = {
 		'VSC',
 		'WCB'
 	],
-	'liquids': [
+	'Liquids': [
 		'BTS',
 		'H2O',
 		'HEX',
 		'LES'
 	],
-	'utility': [
+	'Utility': [
 		'OFF',
 		'SUN',
 		'UTS'
@@ -427,40 +427,40 @@ for (const category in materialCategories) {
 }
 
 const materialCategoryColors = {
-	"agricultural products": "#752b2b",
-	"alloys": "#946537",
-	"chemicals": "#d04774",
-	"construction materials": "#3174ec",
-	"construction parts": "#426684",
-	"construction prefabs": "#28377b",
-	"consumable bundles": "#57232a",
-	"consumables (basic)": "#ae4747",
-	"consumables (luxury)": "#a13140",
-	"drones": "#a54d2b",
-	"electronic devices": "#6f2dac",
-	"electronic parts": "#7447d0",
-	"electronic pieces": "#906bd6",
-	"electronic systems": "#4c3365",
-	"elements": "#564739",
-	"energy systems": "#2e5740",
-	"fuels": "#379437",
-	"gases": "#198284",
-	"liquids": "#8bbde3",
-	"medical equipment": "#6ec36e",
-	"metals": "#4f4f4f",
-	"minerals": "#b28a62",
-	"ores": "#6b707a",
-	"plastics": "#923855",
-	"ship engines": "#b24219",
-	"ship kits": "#b26d19",
-	"ship parts": "#b27c19",
-	"ship shields": "#f99c19",
-	"software components": "#a19248",
-	"software systems": "#554e1e",
-	"software tools": "#9a7b2c",
-	"textiles": "#6b733a",
-	"unit prefabs": "#363435",
-	"utility": "#baada1"
+	"Agricultural Products": "#752b2b",
+	"Alloys": "#946537",
+	"Chemicals": "#d04774",
+	"Construction Materials": "#3174ec",
+	"Construction Parts": "#426684",
+	"Construction Prefabs": "#28377b",
+	"Consumable Cundles": "#57232a",
+	"Consumables (Basic)": "#ae4747",
+	"Consumables (Luxury)": "#a13140",
+	"Drones": "#a54d2b",
+	"Electronic Devices": "#6f2dac",
+	"Electronic Parts": "#7447d0",
+	"Electronic Pieces": "#906bd6",
+	"Electronic Systems": "#4c3365",
+	"Elements": "#564739",
+	"Energy Systems": "#2e5740",
+	"Fuels": "#379437",
+	"Gases": "#198284",
+	"Liquids": "#8bbde3",
+	"Medical Equipment": "#6ec36e",
+	"Metals": "#4f4f4f",
+	"Minerals": "#b28a62",
+	"Ores": "#6b707a",
+	"Plastics": "#923855",
+	"Ship Engines": "#b24219",
+	"Ship Kits": "#b26d19",
+	"Ship Parts": "#b27c19",
+	"Ship Shields": "#f99c19",
+	"Software Components": "#a19248",
+	"Software Systems": "#554e1e",
+	"Software Tools": "#9a7b2c",
+	"Textiles": "#6b733a",
+	"Unit Prefabs": "#363435",
+	"Utility": "#baada1"
 };
 
 var materialsToColors = {};
