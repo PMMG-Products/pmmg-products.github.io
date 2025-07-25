@@ -433,7 +433,7 @@ const materialCategoryColors = {
 	"Construction Materials": "#3174ec",
 	"Construction Parts": "#426684",
 	"Construction Prefabs": "#28377b",
-	"Consumable Cundles": "#57232a",
+	"Consumable Bundles": "#57232a",
 	"Consumables (Basic)": "#ae4747",
 	"Consumables (Luxury)": "#a13140",
 	"Drones": "#a54d2b",
