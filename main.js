@@ -39,7 +39,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 	}
 	else if(graphTypeSelector.value == "compTotals")
 	{
-		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Pie', 'Bar'], ['pie', 'bar']]);
+		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Treemap', 'Treemap (categories)', 'Pie', 'Bar'], ['treemap', 'treemap-categories', 'pie', 'bar']]);
 		chartTypeElem.style.marginLeft = "-30px";
 		selectorSubtypes.appendChild(chartTypeElem);
 		
@@ -524,8 +524,75 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 	var indices = values.map((_, i) => i).sort((a, b) => values[b] - values[a]);
 	mats = indices.map(i => mats[i]);
 	values = indices.map(i => values[i]);
-	
-	if(chartType == 'pie')
+
+	if(chartType == 'treemap' || chartType == 'treemap-categories')
+	{
+		// Filter out negative values
+		indices = values
+			.map((v, i) => i)
+			.filter(i => values[i] >= 0);
+		mats = indices.map(i => mats[i]);
+		values = indices.map(i => values[i]);
+
+		var colors = mats.map(m => materialsToColors[m] || '#000000');
+		var parents = chartType == 'treemap-categories'
+			? mats.map(m => materialsToCategories[m] || 'Other')
+			: mats.map(m => 'Total');
+
+		var totalValue = 0;
+		var categoryValues = {};
+		for (const i of indices) {
+			totalValue += values[i];
+			const category = parents[i];
+			categoryValues[category] = (categoryValues[category] || 0) + values[i];
+		}
+
+		if (chartType == 'treemap-categories') {
+			for (const category in categoryValues) {
+				mats.push(category);
+				values.push(categoryValues[category]);
+				colors.push(materialCategoryColors[category] || '#000000');
+				parents.push('Total');
+			}
+		}
+
+		values.push(totalValue);
+		mats.push('Total');
+		parents.push('');
+		colors.push('#252525');
+
+		Plotly.newPlot(container, {
+			data: [
+				{
+					type: 'treemap',
+					labels: mats,
+					parents: parents,
+					values: values,
+					maxdepth: 2,
+					branchvalues: 'total',
+					marker: {
+						colors: colors,
+					},
+					tiling: {
+						pad: 0,
+					},
+					textposition: 'middle center',
+					hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>'
+				}
+			],
+			layout: { width: 800, height: 600,
+				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
+					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
+				},
+				plot_bgcolor: '#252525',
+				paper_bgcolor: '#252525',
+			},
+			config: {
+				displaylogo: false,
+			}
+		});
+	}
+	else if(chartType == 'pie')
 	{
 		// Filter out negative values
 		indices = values
