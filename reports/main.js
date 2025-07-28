@@ -19,6 +19,7 @@ window.onload = function() {
 	const permalinkContainer = document.getElementById("permalinkContainer");
 	const permalinkButton = document.getElementById("permalinkButton");
 	const permalinkCopyButton = document.getElementById("permalinkCopyButton");
+	const rprunCopyButton = document.getElementById("permalinkCopyButton-rprun");
 	const permalinkOptionsButton = document.getElementById("hideOptions");
 	const permalinkLatestMonth = document.getElementById("latestMonth");
 	
@@ -44,6 +45,14 @@ window.onload = function() {
 
 	permalinkCopyButton.addEventListener("click", function() {
 		const permalinkElem = document.getElementById("permalink");
+		if(permalinkElem.value && permalinkElem.value != "")
+		{
+			navigator.clipboard.writeText(permalinkElem.value);
+		}
+	});
+	
+	rprunCopyButton.addEventListener("click", function() {
+		const permalinkElem = document.getElementById("permalink-rprun");
 		if(permalinkElem.value && permalinkElem.value != "")
 		{
 			navigator.clipboard.writeText(permalinkElem.value);
@@ -108,7 +117,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
 		
 		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('username'));
+		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('companyName'));
 		
 		const submitButton = document.createElement("button");
 		submitButton.textContent = "Query";
@@ -139,7 +148,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']], useURLParams && urlParams.get('metric')));
 		
 		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('username'));
+		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('companyName'));
 		
 		const submitButton = document.createElement("button");
 		submitButton.textContent = "Query";
@@ -169,7 +178,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
 		
 		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('username'));
+		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('companyName'));
 		
 		const submitButton = document.createElement("button");
 		submitButton.textContent = "Query";
@@ -260,19 +269,21 @@ function switchPlot()
 
 function updatePermalink(typeElem)
 {
-	const permalinkInput = document.getElementById("permalink")
+	const permalinkInput = document.getElementById("permalink");
+	const rprunInput = document.getElementById("permalink-rprun");
 	const hideOptionsButton = document.getElementById("hideOptions");
 	const latestMonthButton = document.getElementById("latestMonth");
 	
-	var permalink = "https://pmmg-products.github.io/reports/?type=" + typeElem.value
+	var permalink = "https://pmmg-products.github.io/reports/?type=" + typeElem.value;
+	var rprunLink = "XIT FINREPORT type-" + typeElem.value;
 	
 	const relevantSubtypes = {
 		"topProduction": ["metric", "month"],
 		"topCompanies": ["metric", "month"],
 		"matHistory": ["metric", "ticker"],
-		"compTotals": ["chartType", "metric", "month", "username", "companyName", "companyID"],
-		"compHistory": ["metric", "username", "companyName", "companyID"],
-		"compRank": ["month", "username", "companyName", "companyID"]
+		"compTotals": ["chartType", "metric", "month", "companyName", "companyID"],
+		"compHistory": ["metric", "companyName", "companyID"],
+		"compRank": ["month", "companyName", "companyID"]
 	}
 	
 	relevantSubtypes[typeElem.value].forEach(subtype => {
@@ -281,16 +292,19 @@ function updatePermalink(typeElem)
 		const inputElem = document.getElementById(subtype);
 		if(inputElem.value && inputElem.value != "")
 		{
-			permalink += "&" + subtype + "=" + inputElem.value
+			permalink += "&" + subtype + "=" + inputElem.value;
+			rprunLink += " " + subtype + "-" + inputElem.value;
 		}
 	});
 
 	if(hideOptionsButton.checked)
 	{
-		permalink += "&hideOptions"
+		permalink += "&hideOptions";
+		rprunLink += " hideOptions";
 	}
 
 	permalinkInput.value = permalink;
+	rprunInput.value = rprunLink;
 	return;
 }
 

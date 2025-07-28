@@ -5,6 +5,21 @@ body {
 	margin: 0px;
 	color: rgb(153, 153, 153);
 }
+
+/* For Chrome, Safari */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* For Firefox */
+body,
+html {
+  scrollbar-width: none;
+  overflow: auto;
+}
+
 .topTabContainer {
 	display: flex;
 	margin: 1px;
@@ -47,7 +62,7 @@ body {
 	z-index: 1000;
 	background: rgb(38, 38, 38);
 	width: 300px;
-	height: 62px;
+	height: 84px;
 	top: 33px;
 	border-color: rgb(196, 132, 0);
 	border-width: 3px;
