@@ -1,5 +1,8 @@
 const loadedData = {};	// Data loaded from files
-
+const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025"];
+const months = ["mar25", "apr25", "may25", "jun25"];
+const currentMonth = "jun25";
+	
 window.onload = function() {
 	const graphTypeSelector = document.getElementById("graphType");
 	const selectorSubtypes = document.getElementById("selectorSubtypes");
@@ -58,9 +61,6 @@ window.onload = function() {
 // Update selectors based on graph type
 function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 {
-	const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025"];
-	const months = ["mar25", "apr25", "may25", "jun25"];
-	const currentMonth = "jun25";
 	clearChildren(selectorSubtypes);
 	
 	const urlParams = new URLSearchParams(window.location.search);
@@ -196,6 +196,9 @@ function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 
 function switchPlot()
 {
+	const urlParams = new URLSearchParams(window.location.search);
+	const fullScreen = urlParams.has("hideOptions");
+	
 	const typeElem = document.getElementById("graphType");
 	
 	var subtypeElem;
@@ -204,8 +207,6 @@ function switchPlot()
 	var matElem;
 	var nameElem;
 	var idElem;
-	
-	const months = ['mar25', 'apr25', 'may25', 'jun25'];	// Automate this later
 	
 	const oldGraph = document.getElementById("mainPlot");
 	oldGraph.remove();
@@ -218,17 +219,17 @@ function switchPlot()
 		case "topProduction":
 			metricElem = document.getElementById("metric");
 			monthElem = document.getElementById("month");
-			promiseGenerateTopProdGraph("mainPlot", monthElem.value, metricElem.value);
+			promiseGenerateTopProdGraph("mainPlot", monthElem.value, metricElem.value, fullScreen);
 			break;
 		case "topCompanies":
 			metricElem = document.getElementById("metric");
 			monthElem = document.getElementById("month");
-			promiseGenerateTopCompanyGraph("mainPlot", monthElem.value, metricElem.value);
+			promiseGenerateTopCompanyGraph("mainPlot", monthElem.value, metricElem.value, fullScreen);
 			break;
 		case "matHistory":
 			metricElem = document.getElementById("metric");
 			matElem = document.getElementById("ticker");
-			promiseGenerateMatGraph("mainPlot", matElem.value, metricElem.value, months);
+			promiseGenerateMatGraph("mainPlot", matElem.value, metricElem.value, months, fullScreen);
 			break;
 		case "compTotals":
 			subtypeElem = document.getElementById("chartType");
@@ -236,19 +237,19 @@ function switchPlot()
 			monthElem = document.getElementById("month");
 			nameElem = document.getElementById("companyName");
 			idElem = document.getElementById("companyID");
-			promiseGenerateCompanyGraph("mainPlot", subtypeElem.value, nameElem.value, idElem.value, monthElem.value, metricElem.value);
+			promiseGenerateCompanyGraph("mainPlot", subtypeElem.value, nameElem.value, idElem.value, monthElem.value, metricElem.value, fullScreen);
 			break;
 		case "compHistory":
 			metricElem = document.getElementById("metric");
 			nameElem = document.getElementById("companyName");
 			idElem = document.getElementById("companyID");
-			promiseGenerateCompanyHistoryGraph("mainPlot", nameElem.value, idElem.value, metricElem.value, months);
+			promiseGenerateCompanyHistoryGraph("mainPlot", nameElem.value, idElem.value, metricElem.value, months, fullScreen);
 			break;
 		case "compRank":
 			monthElem = document.getElementById("month");
 			nameElem = document.getElementById("companyName");
 			idElem = document.getElementById("companyID");
-			promiseGenerateRankChart("mainPlot", nameElem.value, idElem.value, monthElem.value, months);
+			promiseGenerateRankChart("mainPlot", nameElem.value, idElem.value, monthElem.value, months, fullScreen);
 	}
 
 	updatePermalink(typeElem);
@@ -290,7 +291,7 @@ function updatePermalink(typeElem)
 	return;
 }
 
-function promiseGenerateRankChart(container, companyName, companyID, currentMonth, months)
+function promiseGenerateRankChart(container, companyName, companyID, currentMonth, months, fullScreen)
 {
 	const monthIndex = months.indexOf(currentMonth);
 	const prevMonth = months[monthIndex == 0 ? 0 : monthIndex - 1];	// Get previous month to determine change
@@ -306,11 +307,11 @@ function promiseGenerateRankChart(container, companyName, companyID, currentMont
 			loadedData['company-data-' + prevMonth] = await fetch('data/company-data-' + prevMonth + '.json?cb=' + Date.now()).then(response => response.json())
 		}
 		
-		generateRankChart(container, loadedData['company-data-' + currentMonth].individual[companyID], (monthIndex == 0 ? undefined : loadedData['company-data-' + prevMonth].individual[companyID]), companyName, currentMonth);  // Use the JSON data
+		generateRankChart(container, loadedData['company-data-' + currentMonth].individual[companyID], (monthIndex == 0 ? undefined : loadedData['company-data-' + prevMonth].individual[companyID]), companyName, currentMonth, fullScreen);  // Use the JSON data
 	})();
 }
 
-function promiseGenerateCompanyHistoryGraph(container, companyName, companyID, metric, months)	// Metric is either 'profit' or 'volume'
+function promiseGenerateCompanyHistoryGraph(container, companyName, companyID, metric, months, fullScreen)	// Metric is either 'profit' or 'volume'
 {
 	if(!companyID){return;}
 	const validMonths = [];
@@ -335,12 +336,12 @@ function promiseGenerateCompanyHistoryGraph(container, companyName, companyID, m
 		
 		if(hasData)
 		{
-			generateCompanyHistoryGraph(container, months.map(month => prettyMonthName(month)), data, companyName, metric)
+			generateCompanyHistoryGraph(container, months.map(month => prettyMonthName(month)), data, companyName, metric, fullScreen)
 		}
 	})();
 }
 
-function promiseGenerateCompanyGraph(container, chartType, companyName, companyID, month, metric)	// Metric is either 'profit' or 'volume'. chartType is either 'bar' or 'pie'
+function promiseGenerateCompanyGraph(container, chartType, companyName, companyID, month, metric, fullScreen)	// Metric is either 'profit' or 'volume'. chartType is either 'bar' or 'pie'
 {
 	(async () => {
 		if(!loadedData['company-data-' + month])
@@ -348,11 +349,11 @@ function promiseGenerateCompanyGraph(container, chartType, companyName, companyI
 			loadedData['company-data-' + month] = await fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
 		}
 		
-		generateCompanyGraph(container, chartType, loadedData['company-data-' + month].individual[companyID], companyName, month, metric);  // Use the JSON data
+		generateCompanyGraph(container, chartType, loadedData['company-data-' + month].individual[companyID], companyName, month, metric, fullScreen);  // Use the JSON data
 	})();
 }
 
-function promiseGenerateTopCompanyGraph(container, month, metric)	// Metric is either 'profit' or 'volume'
+function promiseGenerateTopCompanyGraph(container, month, metric, fullScreen)	// Metric is either 'profit' or 'volume'
 {
 	(async () => {
 		if(!loadedData['company-data-' + month])
@@ -365,11 +366,11 @@ function promiseGenerateTopCompanyGraph(container, month, metric)	// Metric is e
 			loadedData['known-companies'] = await fetch('data/knownCompanies2.json?cb=' + Date.now()).then(response => response.json())
 		}
 		
-		generateTopCompanyGraph(container, loadedData['company-data-' + month], loadedData['known-companies'], month, metric);  // Use the JSON data
+		generateTopCompanyGraph(container, loadedData['company-data-' + month], loadedData['known-companies'], month, metric, fullScreen);  // Use the JSON data
 	})();
 }
 
-function promiseGenerateTopProdGraph(container, month, metric)	// Metric is either 'profit' or 'volume'
+function promiseGenerateTopProdGraph(container, month, metric, fullScreen)	// Metric is either 'profit' or 'volume'
 {
 	(async () => {
 		if(!loadedData['prod-data-' + month])
@@ -385,11 +386,11 @@ function promiseGenerateTopProdGraph(container, month, metric)	// Metric is eith
 				data[ticker]['deficit'] = (data[ticker]['amount'] - (data[ticker]['consumed'] || 0)) * data[ticker]['volume'] / data[ticker]['amount'];
 			});
 		}
-		generateTopProdGraph(container, data, month, metric);  // Use the JSON data
+		generateTopProdGraph(container, data, month, metric, fullScreen);  // Use the JSON data
 	})();
 }
 
-function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is either 'profit', 'volume', or 'amount'
+function promiseGenerateMatGraph(container, ticker, metric, months, fullScreen)	// Metric is either 'profit', 'volume', or 'amount'
 {
 	// Validation/sanitizing
 	if(!ticker){return;}
@@ -427,14 +428,14 @@ function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is
 		
 		if(hasData)
 		{
-			generateMatGraph(container, validMonths.map(month => prettyMonthName(month)), data, ticker, metric)
+			generateMatGraph(container, validMonths.map(month => prettyMonthName(month)), data, ticker, metric, fullScreen)
 		}
 	})();
 }
 
-function generateTopProdGraph(container, prodData, month, metric)
+function generateTopProdGraph(container, prodData, month, metric, fullScreen)
 {
-	
+	if(fullScreen){setFullscreen(container);}
 	const titles = {
 		'profit': 'Profit Materials',
 		'volume': 'Production Volumes',
@@ -460,10 +461,9 @@ function generateTopProdGraph(container, prodData, month, metric)
 	// Extract tickers and volumes into separate arrays
 	const tickers = volumeArray.map(item => item.ticker);
 	const volumes = volumeArray.map(item => item.volume);
-	
 	Plotly.newPlot(container, {
         data: [{ x: tickers, y: volumes, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: {width: 800, height: 400,
+        layout: {width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
 			title: {text: 'Top ' + titles[metric] + ' - ' + prettyMonthName(month),
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -493,13 +493,16 @@ function generateTopProdGraph(container, prodData, month, metric)
 			displayModeBar: true,
 			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
 			displaylogo: false,
-			scrollZoom: true
+			scrollZoom: true,
+			responsive: true
 		}
     });
 }
 
-function generateTopCompanyGraph(container, companyData, knownCompanies, month, metric)
+function generateTopCompanyGraph(container, companyData, knownCompanies, month, metric, fullScreen)
 {
+	if(fullScreen){setFullscreen(container);}
+	
 	// Convert the data object into an array of [companyID, volume] pairs
 	const volumeArray = Object.entries(companyData.totals).map(([companyID, info]) => ({
 		companyID,
@@ -529,7 +532,7 @@ function generateTopCompanyGraph(container, companyData, knownCompanies, month, 
 	
 	Plotly.newPlot(container, {
         data: [{ x: companyNames, y: volumes, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: 800, height: 400, 
+        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
 			title: {text: 'Top Companies (' + prettyModeNames[metric] + ') - ' + prettyMonthName(month),
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -560,13 +563,17 @@ function generateTopCompanyGraph(container, companyData, knownCompanies, month, 
 			displayModeBar: true,
 			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
 			displaylogo: false,
-			scrollZoom: true
+			scrollZoom: true,
+			responsive: true
 		}
     });
 }
 
-function generateMatGraph(container, months, data, ticker, metric)
+function generateMatGraph(container, months, data, ticker, metric, fullScreen)
 {
+	console.log(fullScreen);
+	if(fullScreen){setFullscreen(container);}
+	
 	const titles = {
 		'profit': 'Production Profit History of ',
 		'volume': 'Production Volume History of ',
@@ -586,7 +593,7 @@ function generateMatGraph(container, months, data, ticker, metric)
 	
 	Plotly.newPlot(container, {
         data: [{ x: months, y: data, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: 800, height: 400, 
+        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
 			title: {text: titles[metric] + ticker,
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -614,13 +621,16 @@ function generateMatGraph(container, months, data, ticker, metric)
 			displayModeBar: true,
 			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
 			displaylogo: false,
-			scrollZoom: true
+			scrollZoom: true,
+			responsive: true
 		}
     });
 }
 
-function generateCompanyGraph(container, chartType, data, companyName, month, metric)
+function generateCompanyGraph(container, chartType, data, companyName, month, metric, fullScreen)
 {
+	if(fullScreen){setFullscreen(container);}
+	
 	if(!data){return;}
 	
 	const titles = {
@@ -634,7 +644,7 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 	var indices = values.map((_, i) => i).sort((a, b) => values[b] - values[a]);
 	mats = indices.map(i => mats[i]);
 	values = indices.map(i => values[i]);
-
+	
 	if(chartType == 'treemap' || chartType == 'treemap-categories')
 	{
 		// Filter out negative values
@@ -690,7 +700,7 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 					hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>'
 				}
 			],
-			layout: { width: 800, height: 600,
+			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
 				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 				},
@@ -699,6 +709,7 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 			},
 			config: {
 				displaylogo: false,
+				responsive: true
 			}
 		});
 	}
@@ -713,7 +724,7 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 		
 		Plotly.newPlot(container, {
 			data: [{ labels: mats, values: values, type: 'pie', textinfo: 'label',textposition: 'inside', insidetextorientation: 'none', automargin: false, hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percent}<extra></extra>'}],
-			layout: { width: 800, height: 400, 
+			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
 				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
 						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 				},
@@ -724,7 +735,8 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 				displayModeBar: true,
 				modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
 				displaylogo: false,
-				scrollZoom: true
+				scrollZoom: true,
+				responsive: true
 			}
 		});
 	}
@@ -732,7 +744,7 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 	{
 		Plotly.newPlot(container, {
 			data: [{ x: mats, y: values, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-			layout: { width: 800, height: 400, 
+			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, 
 				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
 						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 				},
@@ -762,14 +774,17 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 				displayModeBar: true,
 				modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
 				displaylogo: false,
-				scrollZoom: true
+				scrollZoom: true,
+				responsive: true
 			}
 		});
 	}
 }
 
-function generateCompanyHistoryGraph(container, months, data, companyName, metric)
+function generateCompanyHistoryGraph(container, months, data, companyName, metric, fullScreen)
 {
+	if(fullScreen){setFullscreen(container);}
+	
 	const titles = {
 		'profit': 'Production Profit History of ',
 		'volume': 'Production Volume History of ',
@@ -781,7 +796,7 @@ function generateCompanyHistoryGraph(container, months, data, companyName, metri
 	
 	Plotly.newPlot(container, {
         data: [{ x: months, y: data, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: 800, height: 400, 
+        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
 			title: {text: titles[metric] + companyName,
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -809,13 +824,16 @@ function generateCompanyHistoryGraph(container, months, data, companyName, metri
 			displayModeBar: true,
 			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
 			displaylogo: false,
-			scrollZoom: true
+			scrollZoom: true,
+			responsive: true
 		}
     });
 }
 
-function generateRankChart(containerID, currentData, prevData, companyName, currentMonth)
+function generateRankChart(containerID, currentData, prevData, companyName, currentMonth, fullScreen)
 {
+	if(fullScreen){setFullscreen(container);}
+	
 	if(!currentData){return;}
 		
 	const container = document.getElementById(containerID);
@@ -1012,6 +1030,13 @@ async function getCompanyInfo()
 		
 		switchPlot();
 	})();
+}
+
+function setFullscreen(container)
+{
+	const elem = document.getElementById(container);
+	if(!elem){return;}
+	elem.classList.add("fullScreen");
 }
 
 const fullMonthNames = {

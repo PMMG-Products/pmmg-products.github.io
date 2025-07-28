@@ -103,6 +103,7 @@ body {
     justify-content: center;
     align-items: center;
 	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .plotSelectorContainer {
@@ -126,7 +127,11 @@ input:focus, select:focus {
 	display: flex;
     justify-content: center;
     align-items: center;
-	margin-top: 10px;
+}
+
+.fullScreen {
+	width: 100vw;
+	height: 100vh;
 }
 
 .plot-container {
