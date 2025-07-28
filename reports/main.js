@@ -116,6 +116,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 		usernameInput.appendChild(submitButton);
 		
 		submitButton.addEventListener('click', getCompanyInfo);
+		usernameInput.addEventListener('keypress', function(e) {if(e.key === 'Enter'){getCompanyInfo();}})
 		
 		usernameInput.style.marginLeft = "33px";
 		
@@ -146,6 +147,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 		usernameInput.appendChild(submitButton);
 		
 		submitButton.addEventListener('click', getCompanyInfo);
+		usernameInput.addEventListener('keypress', function(e) {if(e.key === 'Enter'){getCompanyInfo();}})
 		
 		usernameInput.style.marginLeft = "33px";
 		
@@ -175,6 +177,7 @@ function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 		usernameInput.appendChild(submitButton);
 		
 		submitButton.addEventListener('click', getCompanyInfo);
+		usernameInput.addEventListener('keypress', function(e) {if(e.key === 'Enter'){getCompanyInfo();}})
 		
 		usernameInput.style.marginLeft = "33px";
 		
@@ -463,7 +466,12 @@ function generateTopProdGraph(container, prodData, month, metric, fullScreen)
 	const volumes = volumeArray.map(item => item.volume);
 	Plotly.newPlot(container, {
         data: [{ x: tickers, y: volumes, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: {width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
+        layout: {width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
+					l: 60,  // left
+					r: 10,  // right
+					t: 40,  // top
+					b: 60   // bottom
+				}} : {}),
 			title: {text: 'Top ' + titles[metric] + ' - ' + prettyMonthName(month),
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -529,10 +537,14 @@ function generateTopCompanyGraph(container, companyData, knownCompanies, month, 
 	companyIDs.forEach(id => {
 		companyNames.push(knownCompanies[id] || (id.slice(0, 5) + "..."));
 	});
-	
 	Plotly.newPlot(container, {
         data: [{ x: companyNames, y: volumes, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
+        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
+					l: 60,  // left
+					r: 10,  // right
+					t: 40,  // top
+					b: 100   // bottom
+				}} : {}),
 			title: {text: 'Top Companies (' + prettyModeNames[metric] + ') - ' + prettyMonthName(month),
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -556,8 +568,7 @@ function generateTopCompanyGraph(container, companyData, knownCompanies, month, 
 			},
 			plot_bgcolor: '#252525',
 			paper_bgcolor: '#252525',
-			dragmode: 'pan',
-			margin: {b: 120}
+			dragmode: 'pan'
 		},
 		config: {
 			displayModeBar: true,
@@ -593,7 +604,12 @@ function generateMatGraph(container, months, data, ticker, metric, fullScreen)
 	
 	Plotly.newPlot(container, {
         data: [{ x: months, y: data, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
+        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
+					l: 60,  // left
+					r: 10,  // right
+					t: 40,  // top
+					b: 60   // bottom
+				}} : {}),
 			title: {text: titles[metric] + ticker,
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -700,7 +716,12 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 					hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>'
 				}
 			],
-			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
+			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
+					l: 10,  // left
+					r: 10,  // right
+					t: 40,  // top
+					b: 10   // bottom
+				}} : {}),
 				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 				},
@@ -724,7 +745,12 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 		
 		Plotly.newPlot(container, {
 			data: [{ labels: mats, values: values, type: 'pie', textinfo: 'label',textposition: 'inside', insidetextorientation: 'none', automargin: false, hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percent}<extra></extra>'}],
-			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
+			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
+					l: 10,  // left
+					r: 10,  // right
+					t: 40,  // top
+					b: 10   // bottom
+				}} : {}),
 				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
 						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 				},
@@ -744,7 +770,12 @@ function generateCompanyGraph(container, chartType, data, companyName, month, me
 	{
 		Plotly.newPlot(container, {
 			data: [{ x: mats, y: values, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, 
+			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
+					l: 60,  // left
+					r: 10,  // right
+					t: 40,  // top
+					b: 60   // bottom
+				}} : {}),
 				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
 						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 				},
@@ -793,10 +824,14 @@ function generateCompanyHistoryGraph(container, months, data, companyName, metri
 		'profit': 'Daily Profit [$/day]',
 		'volume': 'Daily Volume [$/day]'
 	}
-	
 	Plotly.newPlot(container, {
         data: [{ x: months, y: data, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen,
+        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
+					l: 60,  // left
+					r: 10,  // right
+					t: 40,  // top
+					b: 60   // bottom
+				}} : {}),
 			title: {text: titles[metric] + companyName,
 					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
 			},
@@ -832,7 +867,7 @@ function generateCompanyHistoryGraph(container, months, data, companyName, metri
 
 function generateRankChart(containerID, currentData, prevData, companyName, currentMonth, fullScreen)
 {
-	if(fullScreen){setFullscreen(container);}
+	if(fullScreen){setFullscreen(containerID);}
 	
 	if(!currentData){return;}
 		
