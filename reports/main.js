@@ -1,3 +1,5 @@
+const loadedData = {};	// Data loaded from files
+
 window.onload = function() {
 	const graphTypeSelector = document.getElementById("graphType");
 	const selectorSubtypes = document.getElementById("selectorSubtypes");
@@ -7,48 +9,106 @@ window.onload = function() {
 		switchPlot();
 	});
 	
-	updateSelectors(graphTypeSelector, selectorSubtypes);
+	updateSelectors(graphTypeSelector, selectorSubtypes, (new URLSearchParams(window.location.search)).has('type'));
 	switchPlot();
+	
+	// Permalink stuff
+	const permalinkContainer = document.getElementById("permalinkContainer");
+	const permalinkButton = document.getElementById("permalinkButton");
+	const permalinkCopyButton = document.getElementById("permalinkCopyButton");
+	const permalinkOptionsButton = document.getElementById("hideOptions");
+	const permalinkLatestMonth = document.getElementById("latestMonth");
+	
+	permalinkButton.addEventListener("click", function(e) {
+		e.stopPropagation();
+		const currentDisplay = permalinkContainer.style.display;
+		if(currentDisplay == "none")
+		{
+			permalinkContainer.style.display = "block";
+		}
+		else
+		{
+			permalinkContainer.style.display = "none";
+		}
+	});
+
+	document.addEventListener("click", function(e) {
+		if(!permalinkContainer.contains(e.target) && !permalinkButton.contains(e.target))
+		{
+			permalinkContainer.style.display = "none";
+		}
+	});
+
+	permalinkCopyButton.addEventListener("click", function() {
+		const permalinkElem = document.getElementById("permalink");
+		if(permalinkElem.value && permalinkElem.value != "")
+		{
+			navigator.clipboard.writeText(permalinkElem.value);
+		}
+	});
+
+	permalinkOptionsButton.addEventListener("change", function() {
+		updatePermalink(graphTypeSelector);
+	});
+	permalinkLatestMonth.addEventListener("change", function() {
+		updatePermalink(graphTypeSelector);
+	});
 };
 
 // Update selectors based on graph type
-function updateSelectors(graphTypeSelector, selectorSubtypes)
+function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
 {
 	const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025"];
 	const months = ["mar25", "apr25", "may25", "jun25"];
 	const currentMonth = "jun25";
 	clearChildren(selectorSubtypes);
 	
+	const urlParams = new URLSearchParams(window.location.search);
+	
+	if(urlParams.has('hideOptions'))
+	{
+		const graphTypeContainer = document.getElementById('graphTypeContainer');
+		const topTabs = document.getElementById('topTabContainer');
+		topTabContainer.style.display = 'none';
+		graphTypeContainer.style.display = 'none';
+		selectorSubtypes.style.display = 'none';
+	}
+	
+	if(useURLParams)
+	{
+		graphTypeSelector.value = urlParams.get('type');
+	}
+	
 	if(graphTypeSelector.value == "topProduction")
 	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Deficit'], ['volume', 'profit', 'deficit']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Deficit'], ['volume', 'profit', 'deficit']], useURLParams && urlParams.get('metric')));
 		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
 	}
 	else if(graphTypeSelector.value == "topCompanies")
 	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']], useURLParams && urlParams.get('metric')));
 		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
 	}
 	else if(graphTypeSelector.value == "matHistory")
 	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Price', 'Produced', 'Consumption', 'Surplus'], ['volume', 'profit', 'price', 'amount', 'consumed', 'surplus']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Price', 'Produced', 'Consumption', 'Surplus'], ['volume', 'profit', 'price', 'amount', 'consumed', 'surplus']], useURLParams && urlParams.get('metric')));
 		
-		selectorSubtypes.appendChild(addInput('input', 'mat', 'Ticker: '));
+		selectorSubtypes.appendChild(addInput('input', 'ticker', 'Ticker: ', undefined, useURLParams && urlParams.get('ticker')));
 	}
 	else if(graphTypeSelector.value == "compTotals")
 	{
-		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Bar', 'Pie', 'Treemap (Mat)', 'Treemap (Cat)'], ['bar', 'pie', 'treemap', 'treemap-categories']]);
+		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Bar', 'Pie', 'Treemap (Mat)', 'Treemap (Cat)'], ['bar', 'pie', 'treemap', 'treemap-categories']], useURLParams && urlParams.get('chartType'));
 		chartTypeElem.style.marginLeft = "-30px";
 		selectorSubtypes.appendChild(chartTypeElem);
 		
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']], useURLParams && urlParams.get('metric')));
 		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
 		
 		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ');
+		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('username'));
 		
 		const submitButton = document.createElement("button");
 		submitButton.textContent = "Query";
@@ -62,12 +122,12 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 		selectorSubtypes.appendChild(usernameInput);
 		
 		// Hidden company ID input, autofilled by query
-		const companyIDInput = addInput('input', 'companyID', 'Company ID: ');
+		const companyIDInput = addInput('input', 'companyID', 'Company ID: ', undefined, useURLParams && urlParams.get('companyID'));
 		companyIDInput.style.visibility = 'hidden';
 		
 		selectorSubtypes.appendChild(companyIDInput);
 		
-		const companyNameInput = addInput('input', 'companyName', 'Company Name: ');
+		const companyNameInput = addInput('input', 'companyName', 'Company Name: ', undefined, useURLParams && urlParams.get('companyName'));
 		companyNameInput.style.visibility = 'hidden';
 		
 		selectorSubtypes.appendChild(companyNameInput);
@@ -75,10 +135,10 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 	}
 	else if(graphTypeSelector.value == "compHistory")
 	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']]));
+		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']], useURLParams && urlParams.get('metric')));
 		
 		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ');
+		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('username'));
 		
 		const submitButton = document.createElement("button");
 		submitButton.textContent = "Query";
@@ -92,22 +152,22 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 		selectorSubtypes.appendChild(usernameInput);
 		
 		// Hidden company ID input, autofilled by query
-		const companyIDInput = addInput('input', 'companyID', 'Company ID: ');
+		const companyIDInput = addInput('input', 'companyID', 'Company ID: ', undefined, useURLParams && urlParams.get('companyID'));
 		companyIDInput.style.visibility = 'hidden';
 		
 		selectorSubtypes.appendChild(companyIDInput);
 		
-		const companyNameInput = addInput('input', 'companyName', 'Company Name: ');
+		const companyNameInput = addInput('input', 'companyName', 'Company Name: ', undefined, useURLParams && urlParams.get('companyName'));
 		companyNameInput.style.visibility = 'hidden';
 		
 		selectorSubtypes.appendChild(companyNameInput);
 	}
 	else if(graphTypeSelector.value == "compRank")
 	{
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], currentMonth));
+		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
 		
 		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ');
+		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('username'));
 		
 		const submitButton = document.createElement("button");
 		submitButton.textContent = "Query";
@@ -121,12 +181,12 @@ function updateSelectors(graphTypeSelector, selectorSubtypes)
 		selectorSubtypes.appendChild(usernameInput);
 		
 		// Hidden company ID input, autofilled by query
-		const companyIDInput = addInput('input', 'companyID', 'Company ID: ');
+		const companyIDInput = addInput('input', 'companyID', 'Company ID: ', undefined, useURLParams && urlParams.get('companyID'));
 		companyIDInput.style.visibility = 'hidden';
 		
 		selectorSubtypes.appendChild(companyIDInput);
 		
-		const companyNameInput = addInput('input', 'companyName', 'Company Name: ');
+		const companyNameInput = addInput('input', 'companyName', 'Company Name: ', undefined, useURLParams && urlParams.get('companyName'));
 		companyNameInput.style.visibility = 'hidden';
 		
 		selectorSubtypes.appendChild(companyNameInput);
@@ -167,7 +227,7 @@ function switchPlot()
 			break;
 		case "matHistory":
 			metricElem = document.getElementById("metric");
-			matElem = document.getElementById("mat");
+			matElem = document.getElementById("ticker");
 			promiseGenerateMatGraph("mainPlot", matElem.value, metricElem.value, months);
 			break;
 		case "compTotals":
@@ -190,6 +250,44 @@ function switchPlot()
 			idElem = document.getElementById("companyID");
 			promiseGenerateRankChart("mainPlot", nameElem.value, idElem.value, monthElem.value, months);
 	}
+
+	updatePermalink(typeElem);
+}
+
+function updatePermalink(typeElem)
+{
+	const permalinkInput = document.getElementById("permalink")
+	const hideOptionsButton = document.getElementById("hideOptions");
+	const latestMonthButton = document.getElementById("latestMonth");
+	
+	var permalink = "https://pmmg-products.github.io/reports/?type=" + typeElem.value
+	
+	const relevantSubtypes = {
+		"topProduction": ["metric", "month"],
+		"topCompanies": ["metric", "month"],
+		"matHistory": ["metric", "ticker"],
+		"compTotals": ["chartType", "metric", "month", "username", "companyName", "companyID"],
+		"compHistory": ["metric", "username", "companyName", "companyID"],
+		"compRank": ["month", "username", "companyName", "companyID"]
+	}
+	
+	relevantSubtypes[typeElem.value].forEach(subtype => {
+		if(subtype == "month" && latestMonthButton.checked){return;}
+		
+		const inputElem = document.getElementById(subtype);
+		if(inputElem.value && inputElem.value != "")
+		{
+			permalink += "&" + subtype + "=" + inputElem.value
+		}
+	});
+
+	if(hideOptionsButton.checked)
+	{
+		permalink += "&hideOptions"
+	}
+
+	permalinkInput.value = permalink;
+	return;
 }
 
 function promiseGenerateRankChart(container, companyName, companyID, currentMonth, months)
@@ -197,75 +295,89 @@ function promiseGenerateRankChart(container, companyName, companyID, currentMont
 	const monthIndex = months.indexOf(currentMonth);
 	const prevMonth = months[monthIndex == 0 ? 0 : monthIndex - 1];	// Get previous month to determine change
 	
-	fetch('data/company-data-' + currentMonth + '.json?cb=' + Date.now())
-    .then(response => response.json())  // Parse JSON data
-    .then(currentData => {
-		fetch('data/company-data-' + prevMonth + '.json?cb=' + Date.now())
-		.then(response => response.json())
-		.then(prevData => {
-			generateRankChart(container, currentData.individual[companyID], (monthIndex == 0 ? undefined : prevData.individual[companyID]), companyName, currentMonth);  // Use the JSON data
-		});
-    });
+	(async () => {
+		if(!loadedData['company-data-' + currentMonth])
+		{
+			loadedData['company-data-' + currentMonth] = await fetch('data/company-data-' + currentMonth + '.json?cb=' + Date.now()).then(response => response.json())
+		}
+		
+		if(!loadedData['company-data-' + prevMonth])
+		{
+			loadedData['company-data-' + prevMonth] = await fetch('data/company-data-' + prevMonth + '.json?cb=' + Date.now()).then(response => response.json())
+		}
+		
+		generateRankChart(container, loadedData['company-data-' + currentMonth].individual[companyID], (monthIndex == 0 ? undefined : loadedData['company-data-' + prevMonth].individual[companyID]), companyName, currentMonth);  // Use the JSON data
+	})();
 }
 
 function promiseGenerateCompanyHistoryGraph(container, companyName, companyID, metric, months)	// Metric is either 'profit' or 'volume'
 {
 	if(!companyID){return;}
 	const validMonths = [];
+	const data = []
+	var hasData = false;
 	
-	// Get data
-	const fetches = months.map(month => 
-		fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(res => res.json()).then(json => ({ "month": month, "monthData": json }))
-	);
-	
-	Promise.all(fetches).then(rawData => {
-		const data = []
-		var hasData = false;
-		
-		rawData.forEach(({month, monthData}) => {
-			const dataPoint = monthData.totals[companyID]
+	(async () => {
+		for(const month of months) {
+			if(!loadedData['company-data-' + month])
+			{
+				loadedData['company-data-' + month] = await fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
+			}
+			
+			const dataPoint = loadedData['company-data-' + month].totals[companyID]
 			if(dataPoint)
 			{
 				data.push(dataPoint[metric])
 				validMonths.push(month);
 				hasData = true;
 			}
-		});
+		};
 		
 		if(hasData)
 		{
 			generateCompanyHistoryGraph(container, months.map(month => prettyMonthName(month)), data, companyName, metric)
 		}
-	});
+	})();
 }
 
 function promiseGenerateCompanyGraph(container, chartType, companyName, companyID, month, metric)	// Metric is either 'profit' or 'volume'. chartType is either 'bar' or 'pie'
 {
-	fetch('data/company-data-' + month + '.json?cb=' + Date.now())
-    .then(response => response.json())  // Parse JSON data
-    .then(data => {
-		generateCompanyGraph(container, chartType, data.individual[companyID], companyName, month, metric);  // Use the JSON data
-    });
+	(async () => {
+		if(!loadedData['company-data-' + month])
+		{
+			loadedData['company-data-' + month] = await fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
+		}
+		
+		generateCompanyGraph(container, chartType, loadedData['company-data-' + month].individual[companyID], companyName, month, metric);  // Use the JSON data
+	})();
 }
 
 function promiseGenerateTopCompanyGraph(container, month, metric)	// Metric is either 'profit' or 'volume'
 {
-	fetch('data/company-data-' + month + '.json?cb=' + Date.now())
-    .then(response => response.json())  // Parse JSON data
-    .then(data => {
-		fetch('data/knownCompanies2.json?cb=' + Date.now())
-		.then(response => response.json())
-		.then(knownCompanies => {
-			generateTopCompanyGraph(container, data, knownCompanies, month, metric);  // Use the JSON data
-		});
-    });
+	(async () => {
+		if(!loadedData['company-data-' + month])
+		{
+			loadedData['company-data-' + month] = await fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
+		}
+		
+		if(!loadedData['known-companies'])
+		{
+			loadedData['known-companies'] = await fetch('data/knownCompanies2.json?cb=' + Date.now()).then(response => response.json())
+		}
+		
+		generateTopCompanyGraph(container, loadedData['company-data-' + month], loadedData['known-companies'], month, metric);  // Use the JSON data
+	})();
 }
 
 function promiseGenerateTopProdGraph(container, month, metric)	// Metric is either 'profit' or 'volume'
 {
-	fetch('data/prod-data-' + month + '.json?cb=' + Date.now())
-    .then(response => response.json())  // Parse JSON data
-    .then(data => {
+	(async () => {
+		if(!loadedData['prod-data-' + month])
+		{
+			loadedData['prod-data-' + month] = await fetch('data/prod-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
+		}
+		
+		const data = loadedData['prod-data-' + month];
 		if(metric == 'deficit')	// Populate deficit into data
 		{
 			Object.keys(data).forEach(ticker => {
@@ -274,7 +386,7 @@ function promiseGenerateTopProdGraph(container, month, metric)	// Metric is eith
 			});
 		}
 		generateTopProdGraph(container, data, month, metric);  // Use the JSON data
-    });
+	})();
 }
 
 function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is either 'profit', 'volume', or 'amount'
@@ -284,17 +396,16 @@ function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is
 	ticker = ticker.toUpperCase();
 	
 	const validMonths = [];
+	const data = [];
 	
-	// Get data
-	const fetches = months.map(month => 
-		fetch('data/prod-data-' + month + '.json?cb=' + Date.now()).then(res => res.json()).then(json => ({ "month": month, "monthData": json }))
-	);
-	
-	Promise.all(fetches).then(rawData => {
-		const data = []
-		var hasData = false;
-		rawData.forEach(({month, monthData}) => {
-			const dataPoint = monthData[ticker]
+	(async () => {
+		for(const month of months) {
+			if(!loadedData['prod-data-' + month])
+			{
+				loadedData['prod-data-' + month] = await fetch('data/prod-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
+			}
+			
+			const dataPoint = loadedData['prod-data-' + month][ticker]
 			if(dataPoint)
 			{
 				if(metric == 'price')
@@ -312,13 +423,13 @@ function promiseGenerateMatGraph(container, ticker, metric, months)	// Metric is
 				validMonths.push(month)
 				hasData = true;
 			}
-		});
+		};
 		
 		if(hasData)
 		{
 			generateMatGraph(container, validMonths.map(month => prettyMonthName(month)), data, ticker, metric)
 		}
-	});
+	})();
 }
 
 function generateTopProdGraph(container, prodData, month, metric)
@@ -848,10 +959,11 @@ function addInput(inputType, id, label, values, defaultValue)
 	if(inputType == 'select')
 	{
 		addOptions(inputElem, values[0], values[1]);
-		if(defaultValue)
-		{
-			inputElem.value = defaultValue;
-		}
+	}
+	
+	if(defaultValue)
+	{
+		inputElem.value = defaultValue;
 	}
 	
 	inputElem.addEventListener("change", function() {
@@ -866,25 +978,40 @@ function addInput(inputType, id, label, values, defaultValue)
 async function getCompanyInfo()
 {
 	const usernameInput = document.getElementById('username');
+	var companyID;
+	var companyName;
 	
 	if(!usernameInput.value){return;}
 	
-	fetch('https://rest.fnar.net/user/' + usernameInput.value)
-	  .then(response => response.json())
-	  .then(data => {
-			const companyID = data.CompanyId;
-			const companyName = data.UserName;
-			if(!companyID || !companyName){return;}
-			
-			const companyIDInput = document.getElementById('companyID');
-			companyIDInput.value = companyID;
-			
-			const companyNameInput = document.getElementById('companyName');
-			companyNameInput.value = companyName;
-			
-			switchPlot();
-	  })
-	  .catch(error => {alert('Bad Response: Check Username'); console.error(error)});
+	(async () => {
+		if(!loadedData['known-companies'])
+		{
+			loadedData['known-companies'] = await fetch('data/knownCompanies2.json?cb=' + Date.now()).then(response => response.json())
+		}
+		
+		const match = Object.entries(loadedData['known-companies']).find(([id, username]) => username && (username.toLowerCase() === usernameInput.value.toLowerCase()));
+		
+		if(match)
+		{
+			[companyID, companyName] = match;
+		}
+		else
+		{
+			const fioResult = fetch('https://rest.fnar.net/user/' + usernameInput.value).then(response => response.json()).catch(error => {alert('Bad Response: Check Username'); console.error(error)});
+			companyID = fioResult.CompanyId;
+			companyName = fioResult.UserName;
+		}
+		
+		if(!companyID || !companyName){return;}
+		
+		const companyIDInput = document.getElementById('companyID');
+		companyIDInput.value = companyID;
+		
+		const companyNameInput = document.getElementById('companyName');
+		companyNameInput.value = companyName;
+		
+		switchPlot();
+	})();
 }
 
 const fullMonthNames = {
