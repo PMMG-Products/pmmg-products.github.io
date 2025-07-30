@@ -275,7 +275,7 @@ function updatePermalink(typeElem)
 	const latestMonthButton = document.getElementById("latestMonth");
 	
 	var permalink = "https://pmmg-products.github.io/reports/?type=" + typeElem.value;
-	var rprunLink = "XIT FINREPORT type-" + typeElem.value;
+	var rprunLink = "XIT PRUNSTATS type-" + typeElem.value;
 	
 	const relevantSubtypes = {
 		"topProduction": ["metric", "month"],
