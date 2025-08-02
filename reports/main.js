@@ -1,7 +1,7 @@
 const loadedData = {};	// Data loaded from files
-const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025"];
-const months = ["mar25", "apr25", "may25", "jun25"];
-const currentMonth = "jun25";
+const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025", "July 3025"];
+const months = ["mar25", "apr25", "may25", "jun25", "jul25"];
+const currentMonth = "jul25";
 	
 window.onload = function() {
 	const graphTypeSelector = document.getElementById("graphType");
@@ -1107,5 +1107,6 @@ const prettyModeNames = {
 	"amount": "Amount",
 	"profit": "Profit",
 	"volume": "Volume",
-	"price": "Price"
+	"price": "Price",
+	"deficit": "Deficit"
 }
