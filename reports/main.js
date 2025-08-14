@@ -1,5 +1,5 @@
 const loadedData = {};	// Data loaded from files
-const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025", "July 3025"];
+const monthsPretty = ["March 2025", "April 2025", "May 2025", "June 2025", "July 2025"];
 const months = ["mar25", "apr25", "may25", "jun25", "jul25"];
 const currentMonth = "jul25";
 	
