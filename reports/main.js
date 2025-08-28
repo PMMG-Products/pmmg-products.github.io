@@ -1,1112 +1,186 @@
-const loadedData = {};	// Data loaded from files
-const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025", "July 3025"];
-const months = ["mar25", "apr25", "may25", "jun25", "jul25"];
-const currentMonth = "jul25";
-	
-window.onload = function() {
-	const graphTypeSelector = document.getElementById("graphType");
-	const selectorSubtypes = document.getElementById("selectorSubtypes");
-	
-	graphTypeSelector.addEventListener("change", function() {
-		updateSelectors(graphTypeSelector, selectorSubtypes);
-		switchPlot();
-	});
-	
-	updateSelectors(graphTypeSelector, selectorSubtypes, (new URLSearchParams(window.location.search)).has('type'));
-	switchPlot();
-	
-	// Permalink stuff
-	const permalinkContainer = document.getElementById("permalinkContainer");
-	const permalinkButton = document.getElementById("permalinkButton");
-	const permalinkCopyButton = document.getElementById("permalinkCopyButton");
-	const rprunCopyButton = document.getElementById("permalinkCopyButton-rprun");
-	const permalinkOptionsButton = document.getElementById("hideOptions");
-	const permalinkLatestMonth = document.getElementById("latestMonth");
-	
-	permalinkButton.addEventListener("click", function(e) {
-		e.stopPropagation();
-		const currentDisplay = permalinkContainer.style.display;
-		if(currentDisplay == "none")
-		{
-			permalinkContainer.style.display = "block";
-		}
-		else
-		{
-			permalinkContainer.style.display = "none";
-		}
-	});
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
-	document.addEventListener("click", function(e) {
-		if(!permalinkContainer.contains(e.target) && !permalinkButton.contains(e.target))
-		{
-			permalinkContainer.style.display = "none";
-		}
-	});
+/***/ "./src/core.ts":
+/*!*********************!*\
+  !*** ./src/core.ts ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-	permalinkCopyButton.addEventListener("click", function() {
-		const permalinkElem = document.getElementById("permalink");
-		if(permalinkElem.value && permalinkElem.value != "")
-		{
-			navigator.clipboard.writeText(permalinkElem.value);
-		}
-	});
-	
-	rprunCopyButton.addEventListener("click", function() {
-		const permalinkElem = document.getElementById("permalink-rprun");
-		if(permalinkElem.value && permalinkElem.value != "")
-		{
-			navigator.clipboard.writeText(permalinkElem.value);
-		}
-	});
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   createGraph: () => (/* binding */ createGraph),\n/* harmony export */   createTable: () => (/* binding */ createTable),\n/* harmony export */   switchPlot: () => (/* binding */ switchPlot)\n/* harmony export */ });\n/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./main */ \"./src/main.ts\");\n/* harmony import */ var _permalink__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./permalink */ \"./src/permalink.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ \"./src/utils.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n\n\nfunction switchPlot() {\n    const graphSelect = document.getElementById(\"graphType\");\n    const graph = _main__WEBPACK_IMPORTED_MODULE_0__.graphs.find(obj => obj.id == graphSelect.value);\n    // Configure layout\n    const oldGraph = document.getElementById(\"mainPlot\");\n    oldGraph === null || oldGraph === void 0 ? void 0 : oldGraph.remove();\n    const newGraph = document.createElement(\"div\");\n    newGraph.id = \"mainPlot\";\n    const graphContainer = document.getElementById(\"mainPlotContainer\");\n    graphContainer === null || graphContainer === void 0 ? void 0 : graphContainer.appendChild(newGraph);\n    // Get data\n    const configValues = {};\n    graph === null || graph === void 0 ? void 0 : graph.configFieldIDs.forEach(id => {\n        const inputElem = document.getElementById(id);\n        configValues[id] = inputElem === null || inputElem === void 0 ? void 0 : inputElem.value;\n    });\n    (0,_permalink__WEBPACK_IMPORTED_MODULE_1__.updatePermalink)();\n    (() => __awaiter(this, void 0, void 0, function* () {\n        graph === null || graph === void 0 ? void 0 : graph.generatePlot(configValues, \"mainPlot\");\n    }))();\n}\n// Creating a Plotly graph using several defaults\n// Define defaults\nconst defaultData = { marker: { color: 'rgb(247, 166, 0)' }, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>' };\nconst defaultLayout = {\n    title: {\n        font: { color: '#eee', family: '\"Droid Sans\", sans-serif' }\n    },\n    xaxis: {\n        title: {\n            font: { color: '#bbb', family: '\"Droid Sans\", sans-serif' }\n        },\n        tickfont: { color: '#666', family: '\"Droid Sans\", sans-serif' },\n        tickangle: -45\n    },\n    yaxis: {\n        title: {\n            font: { color: '#bbb', family: '\"Droid Sans\", sans-serif' }\n        },\n        tickfont: { color: '#666', family: '\"Droid Sans\", sans-serif' },\n        gridcolor: '#323232'\n    },\n    plot_bgcolor: '#252525',\n    paper_bgcolor: '#252525',\n    dragmode: 'pan'\n};\nconst defaultConfig = {\n    displayModeBar: true,\n    modeBarButtonsToRemove: ['lasso2d'], // Remove unwanted buttons\n    displaylogo: false,\n    scrollZoom: true,\n    responsive: true\n};\n// Actually create the graph\nfunction createGraph(plotContainerID, data, layout, config) {\n    // Assign default values\n    for (var i = 0; i < data.length; i++) {\n        data[i] = (0,_utils__WEBPACK_IMPORTED_MODULE_2__.deepMerge)(structuredClone(defaultData), data[i]);\n    }\n    layout = (0,_utils__WEBPACK_IMPORTED_MODULE_2__.deepMerge)(structuredClone(defaultLayout), layout);\n    config = (0,_utils__WEBPACK_IMPORTED_MODULE_2__.deepMerge)(structuredClone(defaultConfig), config);\n    // @ts-ignore\n    Plotly.newPlot(plotContainerID, { 'data': data, 'layout': layout, 'config': config });\n}\n// Create a table\nfunction createTable(plotContainerID, titleText, headers, data, dataDisplay) {\n    const container = document.getElementById(plotContainerID);\n    if (!container) {\n        return;\n    }\n    // Create title\n    const title = document.createElement(\"div\");\n    title.textContent = titleText;\n    title.classList.add(\"title\");\n    container.appendChild(title);\n    const table = document.createElement(\"table\");\n    // Create header\n    const header = document.createElement(\"thead\");\n    const headRow = document.createElement(\"tr\");\n    headers.forEach(label => {\n        const column = document.createElement(\"th\");\n        column.textContent = label;\n        headRow.appendChild(column);\n    });\n    header.appendChild(headRow);\n    table.appendChild(header);\n    // Create body\n    const body = document.createElement(\"tbody\");\n    dataDisplay.forEach((dataRow) => {\n        const row = document.createElement(\"tr\");\n        dataRow.forEach(dataElem => {\n            const td = document.createElement(\"td\");\n            td.appendChild(dataElem);\n            row.appendChild(td);\n        });\n        body.appendChild(row);\n    });\n    table.appendChild(body);\n    container.appendChild(table);\n}\n\n\n//# sourceURL=webpack://reports/./src/core.ts?\n}");
 
-	permalinkOptionsButton.addEventListener("change", function() {
-		updatePermalink(graphTypeSelector);
-	});
-	permalinkLatestMonth.addEventListener("change", function() {
-		updatePermalink(graphTypeSelector);
-	});
-};
+/***/ }),
 
-// Update selectors based on graph type
-function updateSelectors(graphTypeSelector, selectorSubtypes, useURLParams)
-{
-	clearChildren(selectorSubtypes);
-	
-	const urlParams = new URLSearchParams(window.location.search);
-	
-	if(urlParams.has('hideOptions'))
-	{
-		const graphTypeContainer = document.getElementById('graphTypeContainer');
-		const topTabs = document.getElementById('topTabContainer');
-		topTabContainer.style.display = 'none';
-		graphTypeContainer.style.display = 'none';
-		selectorSubtypes.style.display = 'none';
-	}
-	
-	if(useURLParams)
-	{
-		graphTypeSelector.value = urlParams.get('type');
-	}
-	
-	if(graphTypeSelector.value == "topProduction")
-	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Deficit'], ['volume', 'profit', 'deficit']], useURLParams && urlParams.get('metric')));
-		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
-	}
-	else if(graphTypeSelector.value == "topCompanies")
-	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']], useURLParams && urlParams.get('metric')));
-		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
-	}
-	else if(graphTypeSelector.value == "matHistory")
-	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit', 'Price', 'Produced', 'Consumption', 'Surplus'], ['volume', 'profit', 'price', 'amount', 'consumed', 'surplus']], useURLParams && urlParams.get('metric')));
-		
-		selectorSubtypes.appendChild(addInput('input', 'ticker', 'Ticker: ', undefined, useURLParams && urlParams.get('ticker')));
-	}
-	else if(graphTypeSelector.value == "compTotals")
-	{
-		const chartTypeElem = addInput('select', 'chartType', 'Chart Type: ', [['Bar', 'Pie', 'Treemap (Mat)', 'Treemap (Cat)'], ['bar', 'pie', 'treemap', 'treemap-categories']], useURLParams && urlParams.get('chartType'));
-		chartTypeElem.style.marginLeft = "-30px";
-		selectorSubtypes.appendChild(chartTypeElem);
-		
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']], useURLParams && urlParams.get('metric')));
-		
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
-		
-		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('companyName'));
-		
-		const submitButton = document.createElement("button");
-		submitButton.textContent = "Query";
-		submitButton.classList.add("queryButton");
-		usernameInput.appendChild(submitButton);
-		
-		submitButton.addEventListener('click', getCompanyInfo);
-		usernameInput.addEventListener('keypress', function(e) {if(e.key === 'Enter'){getCompanyInfo();}})
-		
-		usernameInput.style.marginLeft = "33px";
-		
-		selectorSubtypes.appendChild(usernameInput);
-		
-		// Hidden company ID input, autofilled by query
-		const companyIDInput = addInput('input', 'companyID', 'Company ID: ', undefined, useURLParams && urlParams.get('companyID'));
-		companyIDInput.style.visibility = 'hidden';
-		
-		selectorSubtypes.appendChild(companyIDInput);
-		
-		const companyNameInput = addInput('input', 'companyName', 'Company Name: ', undefined, useURLParams && urlParams.get('companyName'));
-		companyNameInput.style.visibility = 'hidden';
-		
-		selectorSubtypes.appendChild(companyNameInput);
-		
-	}
-	else if(graphTypeSelector.value == "compHistory")
-	{
-		selectorSubtypes.appendChild(addInput('select', 'metric', 'Metric: ', [['Volume', 'Profit'], ['volume', 'profit']], useURLParams && urlParams.get('metric')));
-		
-		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('companyName'));
-		
-		const submitButton = document.createElement("button");
-		submitButton.textContent = "Query";
-		submitButton.classList.add("queryButton");
-		usernameInput.appendChild(submitButton);
-		
-		submitButton.addEventListener('click', getCompanyInfo);
-		usernameInput.addEventListener('keypress', function(e) {if(e.key === 'Enter'){getCompanyInfo();}})
-		
-		usernameInput.style.marginLeft = "33px";
-		
-		selectorSubtypes.appendChild(usernameInput);
-		
-		// Hidden company ID input, autofilled by query
-		const companyIDInput = addInput('input', 'companyID', 'Company ID: ', undefined, useURLParams && urlParams.get('companyID'));
-		companyIDInput.style.visibility = 'hidden';
-		
-		selectorSubtypes.appendChild(companyIDInput);
-		
-		const companyNameInput = addInput('input', 'companyName', 'Company Name: ', undefined, useURLParams && urlParams.get('companyName'));
-		companyNameInput.style.visibility = 'hidden';
-		
-		selectorSubtypes.appendChild(companyNameInput);
-	}
-	else if(graphTypeSelector.value == "compRank")
-	{
-		selectorSubtypes.appendChild(addInput('select', 'month', 'Month: ', [monthsPretty, months], useURLParams && urlParams.has('month') ? urlParams.get('month') : currentMonth));
-		
-		// Username input and query button
-		const usernameInput = addInput('input', 'username', 'Username: ', undefined, useURLParams && urlParams.get('companyName'));
-		
-		const submitButton = document.createElement("button");
-		submitButton.textContent = "Query";
-		submitButton.classList.add("queryButton");
-		usernameInput.appendChild(submitButton);
-		
-		submitButton.addEventListener('click', getCompanyInfo);
-		usernameInput.addEventListener('keypress', function(e) {if(e.key === 'Enter'){getCompanyInfo();}})
-		
-		usernameInput.style.marginLeft = "33px";
-		
-		selectorSubtypes.appendChild(usernameInput);
-		
-		// Hidden company ID input, autofilled by query
-		const companyIDInput = addInput('input', 'companyID', 'Company ID: ', undefined, useURLParams && urlParams.get('companyID'));
-		companyIDInput.style.visibility = 'hidden';
-		
-		selectorSubtypes.appendChild(companyIDInput);
-		
-		const companyNameInput = addInput('input', 'companyName', 'Company Name: ', undefined, useURLParams && urlParams.get('companyName'));
-		companyNameInput.style.visibility = 'hidden';
-		
-		selectorSubtypes.appendChild(companyNameInput);
-		
-	}
-}
+/***/ "./src/graphs/companyHistory.ts":
+/*!**************************************!*\
+  !*** ./src/graphs/companyHistory.ts ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-function switchPlot()
-{
-	const urlParams = new URLSearchParams(window.location.search);
-	const fullScreen = urlParams.has("hideOptions");
-	
-	const typeElem = document.getElementById("graphType");
-	
-	var subtypeElem;
-	var monthElem;
-	var metricElem;
-	var matElem;
-	var nameElem;
-	var idElem;
-	
-	const oldGraph = document.getElementById("mainPlot");
-	oldGraph.remove();
-	const newGraph = document.createElement("div");
-	newGraph.id = "mainPlot";
-	const graphContainer = document.getElementById("mainPlotContainer");
-	graphContainer.appendChild(newGraph);
-	switch(typeElem.value)
-	{
-		case "topProduction":
-			metricElem = document.getElementById("metric");
-			monthElem = document.getElementById("month");
-			promiseGenerateTopProdGraph("mainPlot", monthElem.value, metricElem.value, fullScreen);
-			break;
-		case "topCompanies":
-			metricElem = document.getElementById("metric");
-			monthElem = document.getElementById("month");
-			promiseGenerateTopCompanyGraph("mainPlot", monthElem.value, metricElem.value, fullScreen);
-			break;
-		case "matHistory":
-			metricElem = document.getElementById("metric");
-			matElem = document.getElementById("ticker");
-			promiseGenerateMatGraph("mainPlot", matElem.value, metricElem.value, months, fullScreen);
-			break;
-		case "compTotals":
-			subtypeElem = document.getElementById("chartType");
-			metricElem = document.getElementById("metric");
-			monthElem = document.getElementById("month");
-			nameElem = document.getElementById("companyName");
-			idElem = document.getElementById("companyID");
-			promiseGenerateCompanyGraph("mainPlot", subtypeElem.value, nameElem.value, idElem.value, monthElem.value, metricElem.value, fullScreen);
-			break;
-		case "compHistory":
-			metricElem = document.getElementById("metric");
-			nameElem = document.getElementById("companyName");
-			idElem = document.getElementById("companyID");
-			promiseGenerateCompanyHistoryGraph("mainPlot", nameElem.value, idElem.value, metricElem.value, months, fullScreen);
-			break;
-		case "compRank":
-			monthElem = document.getElementById("month");
-			nameElem = document.getElementById("companyName");
-			idElem = document.getElementById("companyID");
-			promiseGenerateRankChart("mainPlot", nameElem.value, idElem.value, monthElem.value, months, fullScreen);
-	}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   CompanyHistory: () => (/* binding */ CompanyHistory)\n/* harmony export */ });\n/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ \"./src/core.ts\");\n/* harmony import */ var _staticData_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../staticData/constants */ \"./src/staticData/constants.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n\n\nclass CompanyHistory {\n    constructor(loadedData, urlParams) {\n        this.id = \"compHistory\";\n        this.displayName = \"Company History\";\n        this.configFieldIDs = [\"metric\", \"companyName\"];\n        this.loadedData = loadedData;\n        this.urlParams = urlParams;\n    }\n    setConfigs(useURLParams) {\n        const updateFunc = function () { (0,_core__WEBPACK_IMPORTED_MODULE_0__.switchPlot)(); };\n        const configDiv = document.getElementById(\"selectorSubtypes\");\n        if (configDiv) {\n            (0,_utils__WEBPACK_IMPORTED_MODULE_2__.clearChildren)(configDiv);\n        }\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"metric\", \"Metric: \", { prettyValues: [\"Volume\", \"Profit\"], values: [\"volume\", \"profit\"] }, useURLParams ? this.urlParams.metric : undefined, updateFunc));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"input\", \"companyName\", \"Username: \", undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, \"-27px\"));\n    }\n    generatePlot(configValues, plotContainerID) {\n        return __awaiter(this, void 0, void 0, function* () {\n            if (!configValues.companyName || configValues.companyName == \"\") {\n                return;\n            }\n            // Get Company Data\n            const knownCompanies = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"knownCompanies\");\n            // Get Company ID\n            var companyID = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getCompanyId)(configValues.companyName, this.loadedData);\n            if (!companyID) {\n                return;\n            }\n            var companyName = knownCompanies[companyID];\n            // Get Data\n            const fullCompanyData = []; // Company data across the months\n            for (var i = 0; i < _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months.length; i++) {\n                const monthData = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"company\", _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months[i]);\n                fullCompanyData.push(monthData.individual[companyID]);\n            }\n            const validMonths = []; // Months with data\n            const companyData = []; // Company data for specific metric\n            fullCompanyData.forEach((data, i) => {\n                if (!data) {\n                    return;\n                }\n                var metric = 0; // Metric value for this month\n                validMonths.push(_staticData_constants__WEBPACK_IMPORTED_MODULE_1__.monthsPretty[i]);\n                Object.keys(data).forEach((ticker) => {\n                    var _a, _b;\n                    metric += (_b = (_a = data[ticker]) === null || _a === void 0 ? void 0 : _a[configValues.metric]) !== null && _b !== void 0 ? _b : 0;\n                });\n                companyData.push(metric);\n            });\n            // Create graph\n            const titles = {\n                'profit': 'Production Profit History of ',\n                'volume': 'Production Volume History of ',\n            };\n            const yAxis = {\n                'profit': 'Daily Profit [$/day]',\n                'volume': 'Daily Volume [$/day]'\n            };\n            (0,_core__WEBPACK_IMPORTED_MODULE_0__.createGraph)(plotContainerID, [{ x: validMonths, y: companyData, type: 'bar' }], Object.assign(Object.assign({ width: this.urlParams.hideOptions !== undefined ? undefined : 800, height: this.urlParams.hideOptions !== undefined ? undefined : 400, autosize: this.urlParams.hideOptions !== undefined }, (this.urlParams.hideOptions !== undefined ? { margin: {\n                    l: 60, // left\n                    r: 10, // right\n                    t: 40, // top\n                    b: 60 // bottom\n                } } : {})), { title: { text: titles[configValues.metric] + companyName }, xaxis: {\n                    title: { text: 'Month' }\n                }, yaxis: {\n                    title: { text: yAxis[configValues.metric] }\n                } }), {});\n        });\n    }\n}\n\n\n//# sourceURL=webpack://reports/./src/graphs/companyHistory.ts?\n}");
 
-	updatePermalink(typeElem);
-}
+/***/ }),
 
-function updatePermalink(typeElem)
-{
-	const permalinkInput = document.getElementById("permalink");
-	const rprunInput = document.getElementById("permalink-rprun");
-	const hideOptionsButton = document.getElementById("hideOptions");
-	const latestMonthButton = document.getElementById("latestMonth");
-	
-	var permalink = "https://pmmg-products.github.io/reports/?type=" + typeElem.value;
-	var rprunLink = "XIT PRUNSTATS type-" + typeElem.value;
-	
-	const relevantSubtypes = {
-		"topProduction": ["metric", "month"],
-		"topCompanies": ["metric", "month"],
-		"matHistory": ["metric", "ticker"],
-		"compTotals": ["chartType", "metric", "month", "companyName", "companyID"],
-		"compHistory": ["metric", "companyName", "companyID"],
-		"compRank": ["month", "companyName", "companyID"]
-	}
-	
-	relevantSubtypes[typeElem.value].forEach(subtype => {
-		if(subtype == "month" && latestMonthButton.checked){return;}
-		
-		const inputElem = document.getElementById(subtype);
-		if(inputElem.value && inputElem.value != "")
-		{
-			permalink += "&" + subtype + "=" + inputElem.value;
-			rprunLink += " " + subtype + "-" + inputElem.value;
-		}
-	});
+/***/ "./src/graphs/companyRank.ts":
+/*!***********************************!*\
+  !*** ./src/graphs/companyRank.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-	if(hideOptionsButton.checked)
-	{
-		permalink += "&hideOptions";
-		rprunLink += " hideOptions";
-	}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   CompanyRank: () => (/* binding */ CompanyRank)\n/* harmony export */ });\n/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ \"./src/core.ts\");\n/* harmony import */ var _staticData_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../staticData/constants */ \"./src/staticData/constants.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n\n\nclass CompanyRank {\n    constructor(loadedData, urlParams) {\n        this.id = \"compRank\";\n        this.displayName = \"Company Rank\";\n        this.configFieldIDs = [\"month\", \"companyName\"];\n        this.loadedData = loadedData;\n        this.urlParams = urlParams;\n    }\n    setConfigs(useURLParams) {\n        const updateFunc = function () { (0,_core__WEBPACK_IMPORTED_MODULE_0__.switchPlot)(); };\n        const configDiv = document.getElementById(\"selectorSubtypes\");\n        if (configDiv) {\n            (0,_utils__WEBPACK_IMPORTED_MODULE_2__.clearChildren)(configDiv);\n        }\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"month\", \"Month: \", { prettyValues: _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.monthsPretty, \"values\": _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months }, useURLParams && this.urlParams.month ? this.urlParams.month : _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months[_staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months.length - 1], updateFunc));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"input\", \"companyName\", \"Username: \", undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, \"-27px\"));\n    }\n    generatePlot(configValues, plotContainerID) {\n        return __awaiter(this, void 0, void 0, function* () {\n            if (!configValues.companyName || configValues.companyName == \"\") {\n                return;\n            }\n            // Get Company Data\n            const knownCompanies = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"knownCompanies\");\n            // Get Company ID\n            var companyID = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getCompanyId)(configValues.companyName, this.loadedData);\n            if (!companyID) {\n                return;\n            }\n            var companyName = knownCompanies[companyID];\n            // Get Data\n            const fullCompanyData = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"company\", configValues.month); // Company data for the current month\n            const fullPrevCompanyData = configValues.month == _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months[0] ? { individual: {} } : yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"company\", _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months[_staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months.indexOf(configValues.month) - 1]);\n            const companyData = fullCompanyData.individual[companyID]; // Company data for this company for this month\n            const prevCompanyData = fullPrevCompanyData.individual[companyID]; // Company data for this company for last month. May be undefined.\n            if (!companyData) {\n                return;\n            }\n            var tableData = []; // Entries in the table in raw data form\n            var tableDisplay = []; // Entries in the table in presentable form\n            Object.keys(companyData).forEach(ticker => {\n                var _a;\n                const tableRow = [companyData[ticker].rank, ticker, companyData[ticker].amount, companyData[ticker].volume, companyData[ticker].profit];\n                const tableDisplayRow = [];\n                // Add company rank\n                if (prevCompanyData) {\n                    const outerRankDiv = document.createElement(\"div\");\n                    const symbolDiv = document.createElement(\"div\");\n                    const rankDiv = document.createElement(\"div\");\n                    outerRankDiv.style.display = \"flex\";\n                    symbolDiv.style.width = \"14px\";\n                    symbolDiv.style.minWidth = \"14px\";\n                    symbolDiv.style.marginRight = \"2px\";\n                    const prevRank = (_a = prevCompanyData[ticker]) === null || _a === void 0 ? void 0 : _a.rank;\n                    const increasing = prevRank < companyData[ticker].rank;\n                    if (prevRank && prevRank != companyData[ticker].rank) {\n                        symbolDiv.textContent = increasing ? \"▼\" : \"▲\";\n                        symbolDiv.style.color = increasing ? \"#d9534f\" : \"#5cb85c\";\n                    }\n                    rankDiv.textContent = companyData[ticker].rank;\n                    outerRankDiv.appendChild(symbolDiv);\n                    outerRankDiv.appendChild(rankDiv);\n                    tableDisplayRow.push(outerRankDiv);\n                }\n                else {\n                    const rankDiv = document.createElement(\"div\");\n                    rankDiv.textContent = companyData[ticker].rank;\n                    tableDisplayRow.push(rankDiv);\n                }\n                // Add ticker\n                const tickerDiv = document.createElement(\"div\");\n                tickerDiv.textContent = ticker;\n                tableDisplayRow.push(tickerDiv);\n                // Add amount\n                const amountDiv = document.createElement(\"div\");\n                amountDiv.textContent = companyData[ticker].amount.toLocaleString(undefined, { maximumFractionDigits: 1 });\n                tableDisplayRow.push(amountDiv);\n                // Add volume\n                const volumeDiv = document.createElement(\"div\");\n                volumeDiv.textContent = \"$\" + companyData[ticker].volume.toLocaleString(undefined, { notation: \"compact\", maximumSignificantDigits: 3 });\n                tableDisplayRow.push(volumeDiv);\n                // Add profit\n                const profitDiv = document.createElement(\"div\");\n                var profitText;\n                if (companyData[ticker].profit < 0) {\n                    profitText = \"-$\" + (-companyData[ticker].profit).toLocaleString(undefined, { notation: \"compact\", maximumSignificantDigits: 3 });\n                }\n                else {\n                    profitText = \"$\" + companyData[ticker].profit.toLocaleString(undefined, { notation: \"compact\", maximumSignificantDigits: 3 });\n                }\n                profitDiv.textContent = profitText;\n                tableDisplayRow.push(profitDiv);\n                tableData.push(tableRow);\n                tableDisplay.push(tableDisplayRow);\n            });\n            // Sort by rank by default\n            const indices = tableData.map((_, i) => i)\n                .sort((a, b) => tableData[a][0] - tableData[b][0]);\n            tableData = indices.map(i => tableData[i]);\n            tableDisplay = indices.map(i => tableDisplay[i]);\n            const title = \"Production Ranking of \" + companyName + \" - \" + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.prettyMonthName)(configValues.month);\n            const headers = [\"Rank\", \"Ticker\", \"Amount [/day]\", \"Volume [$/day]\", \"Profit [$/day]\"];\n            (0,_core__WEBPACK_IMPORTED_MODULE_0__.createTable)(plotContainerID, title, headers, tableData, tableDisplay);\n        });\n    }\n}\n\n\n//# sourceURL=webpack://reports/./src/graphs/companyRank.ts?\n}");
 
-	permalinkInput.value = permalink;
-	rprunInput.value = rprunLink;
-	return;
-}
+/***/ }),
 
-function promiseGenerateRankChart(container, companyName, companyID, currentMonth, months, fullScreen)
-{
-	const monthIndex = months.indexOf(currentMonth);
-	const prevMonth = months[monthIndex == 0 ? 0 : monthIndex - 1];	// Get previous month to determine change
-	
-	(async () => {
-		if(!loadedData['company-data-' + currentMonth])
-		{
-			loadedData['company-data-' + currentMonth] = await fetch('data/company-data-' + currentMonth + '.json?cb=' + Date.now()).then(response => response.json())
-		}
-		
-		if(!loadedData['company-data-' + prevMonth])
-		{
-			loadedData['company-data-' + prevMonth] = await fetch('data/company-data-' + prevMonth + '.json?cb=' + Date.now()).then(response => response.json())
-		}
-		
-		generateRankChart(container, loadedData['company-data-' + currentMonth].individual[companyID], (monthIndex == 0 ? undefined : loadedData['company-data-' + prevMonth].individual[companyID]), companyName, currentMonth, fullScreen);  // Use the JSON data
-	})();
-}
+/***/ "./src/graphs/companyTotals.ts":
+/*!*************************************!*\
+  !*** ./src/graphs/companyTotals.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-function promiseGenerateCompanyHistoryGraph(container, companyName, companyID, metric, months, fullScreen)	// Metric is either 'profit' or 'volume'
-{
-	if(!companyID){return;}
-	const validMonths = [];
-	const data = []
-	var hasData = false;
-	
-	(async () => {
-		for(const month of months) {
-			if(!loadedData['company-data-' + month])
-			{
-				loadedData['company-data-' + month] = await fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
-			}
-			
-			const dataPoint = loadedData['company-data-' + month].totals[companyID]
-			if(dataPoint)
-			{
-				data.push(dataPoint[metric])
-				validMonths.push(month);
-				hasData = true;
-			}
-		};
-		
-		if(hasData)
-		{
-			generateCompanyHistoryGraph(container, months.map(month => prettyMonthName(month)), data, companyName, metric, fullScreen)
-		}
-	})();
-}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   CompanyTotals: () => (/* binding */ CompanyTotals)\n/* harmony export */ });\n/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ \"./src/core.ts\");\n/* harmony import */ var _staticData_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../staticData/constants */ \"./src/staticData/constants.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n\n\nclass CompanyTotals {\n    constructor(loadedData, urlParams) {\n        this.id = \"compTotals\";\n        this.displayName = \"Company Totals\";\n        this.configFieldIDs = [\"chartType\", \"metric\", \"month\", \"companyName\"];\n        this.loadedData = loadedData;\n        this.urlParams = urlParams;\n    }\n    setConfigs(useURLParams) {\n        const updateFunc = function () { (0,_core__WEBPACK_IMPORTED_MODULE_0__.switchPlot)(); };\n        const configDiv = document.getElementById(\"selectorSubtypes\");\n        if (configDiv) {\n            (0,_utils__WEBPACK_IMPORTED_MODULE_2__.clearChildren)(configDiv);\n        }\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"chartType\", \"Chart Type: \", { prettyValues: [\"Bar\", \"Pie\", \"Treemap (Mat)\", \"Treemap (Cat)\"], values: [\"bar\", \"pie\", \"treemap\", \"treemap-categories\"] }, useURLParams ? this.urlParams.chartType : undefined, updateFunc, \"-30px\"));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"metric\", \"Metric: \", { prettyValues: [\"Volume\", \"Profit\"], values: [\"volume\", \"profit\"] }, useURLParams ? this.urlParams.metric : undefined, updateFunc));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"month\", \"Month: \", { prettyValues: _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.monthsPretty, \"values\": _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months }, useURLParams && this.urlParams.month ? this.urlParams.month : _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months[_staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months.length - 1], updateFunc));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"input\", \"companyName\", \"Username: \", undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, \"-27px\"));\n    }\n    generatePlot(configValues, plotContainerID) {\n        return __awaiter(this, void 0, void 0, function* () {\n            if (!configValues.companyName || configValues.companyName == \"\") {\n                return;\n            }\n            // Get Company Data\n            const companyData = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"company\", configValues.month);\n            const knownCompanies = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"knownCompanies\");\n            // Get Company ID\n            var companyID = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getCompanyId)(configValues.companyName, this.loadedData);\n            if (!companyID) {\n                return;\n            }\n            var companyName = knownCompanies[companyID];\n            if (!companyData.individual[companyID]) {\n                return;\n            }\n            // Parse Data\n            var catData = []; // Y-axis of chart\n            var categories = []; // X-axis of chart\n            var totalValue = 0; // Total of metric\n            Object.keys(companyData.individual[companyID]).forEach((ticker) => {\n                const metric = companyData.individual[companyID][ticker][configValues.metric];\n                if (metric < 0 && (configValues.chartType == \"treemap\" || configValues.chartType == \"treemap-categories\")) {\n                    return;\n                }\n                totalValue += metric;\n                if (configValues.chartType == \"treemap-categories\") {\n                    const category = (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getMatCategory)(ticker);\n                    const catIndex = categories.indexOf(category);\n                    if (catIndex == -1) {\n                        categories.push(category);\n                        catData.push(metric);\n                    }\n                    else {\n                        catData[catIndex] += metric;\n                    }\n                }\n                else {\n                    catData.push(metric);\n                    categories.push(ticker);\n                }\n            });\n            // Sort data from largest to smallest categories\n            const indices = Array.from(categories.keys());\n            indices.sort((a, b) => catData[b] - catData[a]);\n            catData = indices.map(i => catData[i]);\n            categories = indices.map(i => categories[i]);\n            // Create graph\n            const titles = {\n                'profit': 'Production Profit Breakdown of ',\n                'volume': 'Production Volume Breakdown of ',\n            };\n            if (configValues.chartType == \"treemap\" || configValues.chartType == \"treemap-categories\") {\n                // Get Colors\n                const colors = [];\n                if (configValues.chartType == \"treemap\") {\n                    categories.forEach(cat => {\n                        colors.push((0,_utils__WEBPACK_IMPORTED_MODULE_2__.getMatColor)(cat));\n                    });\n                }\n                else {\n                    categories.forEach(cat => {\n                        var _a;\n                        colors.push((_a = _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.materialCategoryColors[cat]) !== null && _a !== void 0 ? _a : \"#000000\");\n                    });\n                }\n                const parents = categories.map(m => \"Total\");\n                categories.push(\"Total\");\n                catData.push(totalValue);\n                parents.push('');\n                colors.push('#252525');\n                // Make graph\n                (0,_core__WEBPACK_IMPORTED_MODULE_0__.createGraph)(plotContainerID, [{\n                        labels: categories,\n                        values: catData,\n                        parents: parents,\n                        type: 'treemap',\n                        maxdepth: 2,\n                        branchvalues: 'total',\n                        marker: {\n                            colors: colors,\n                        },\n                        tiling: {\n                            pad: 0,\n                        },\n                        textposition: 'middle center',\n                        hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>'\n                    }], Object.assign(Object.assign({ width: this.urlParams.hideOptions !== undefined ? undefined : 800, height: this.urlParams.hideOptions !== undefined ? undefined : 400, autosize: this.urlParams.hideOptions !== undefined }, (this.urlParams.hideOptions !== undefined ? { margin: {\n                        l: 10, // left\n                        r: 10, // right\n                        t: 40, // top\n                        b: 10 // bottom\n                    } } : {})), { title: { text: titles[configValues.metric] + companyName + ' - ' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.prettyMonthName)(configValues.month) } }), {});\n            }\n            else if (configValues.chartType == \"bar\") {\n                // Create graph\n                (0,_core__WEBPACK_IMPORTED_MODULE_0__.createGraph)(plotContainerID, [{ x: categories, y: catData, type: 'bar' }], Object.assign(Object.assign({ width: this.urlParams.hideOptions !== undefined ? undefined : 800, height: this.urlParams.hideOptions !== undefined ? undefined : 400, autosize: this.urlParams.hideOptions !== undefined }, (this.urlParams.hideOptions !== undefined ? { margin: {\n                        l: 60, // left\n                        r: 10, // right\n                        t: 40, // top\n                        b: 60 // bottom\n                    } } : {})), { title: { text: titles[configValues.metric] + companyName + ' - ' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.prettyMonthName)(configValues.month) }, xaxis: {\n                        title: { text: 'Ticker' },\n                        range: [-0.5, Math.min(categories.length, 30) - 0.5]\n                    }, yaxis: {\n                        title: { text: _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.prettyModeNames[configValues.metric] + ' [$/day]' },\n                        range: [0, null]\n                    } }), {});\n            }\n            else if (configValues.chartType == \"pie\") {\n                // Create graph\n                (0,_core__WEBPACK_IMPORTED_MODULE_0__.createGraph)(plotContainerID, [{ labels: categories, values: catData, type: 'pie', textinfo: 'label', textposition: 'inside', insidetextorientation: 'none', automargin: false }], Object.assign(Object.assign({ width: this.urlParams.hideOptions !== undefined ? undefined : 800, height: this.urlParams.hideOptions !== undefined ? undefined : 400, autosize: this.urlParams.hideOptions !== undefined }, (this.urlParams.hideOptions !== undefined ? { margin: {\n                        l: 10, // left\n                        r: 10, // right\n                        t: 40, // top\n                        b: 10 // bottom\n                    } } : {})), { title: { text: titles[configValues.metric] + companyName + ' - ' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.prettyMonthName)(configValues.month) }, xaxis: {\n                        title: { text: 'Ticker' },\n                        range: [-0.5, Math.min(categories.length, 30) - 0.5]\n                    }, yaxis: {\n                        title: { text: _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.prettyModeNames[configValues.metric] + ' [$/day]' },\n                        range: [0, null]\n                    } }), {});\n            }\n        });\n    }\n}\n\n\n//# sourceURL=webpack://reports/./src/graphs/companyTotals.ts?\n}");
 
-function promiseGenerateCompanyGraph(container, chartType, companyName, companyID, month, metric, fullScreen)	// Metric is either 'profit' or 'volume'. chartType is either 'bar' or 'pie'
-{
-	(async () => {
-		if(!loadedData['company-data-' + month])
-		{
-			loadedData['company-data-' + month] = await fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
-		}
-		
-		generateCompanyGraph(container, chartType, loadedData['company-data-' + month].individual[companyID], companyName, month, metric, fullScreen);  // Use the JSON data
-	})();
-}
+/***/ }),
 
-function promiseGenerateTopCompanyGraph(container, month, metric, fullScreen)	// Metric is either 'profit' or 'volume'
-{
-	(async () => {
-		if(!loadedData['company-data-' + month])
-		{
-			loadedData['company-data-' + month] = await fetch('data/company-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
-		}
-		
-		if(!loadedData['known-companies'])
-		{
-			loadedData['known-companies'] = await fetch('data/knownCompanies2.json?cb=' + Date.now()).then(response => response.json())
-		}
-		
-		generateTopCompanyGraph(container, loadedData['company-data-' + month], loadedData['known-companies'], month, metric, fullScreen);  // Use the JSON data
-	})();
-}
+/***/ "./src/graphs/matHistory.ts":
+/*!**********************************!*\
+  !*** ./src/graphs/matHistory.ts ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-function promiseGenerateTopProdGraph(container, month, metric, fullScreen)	// Metric is either 'profit' or 'volume'
-{
-	(async () => {
-		if(!loadedData['prod-data-' + month])
-		{
-			loadedData['prod-data-' + month] = await fetch('data/prod-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
-		}
-		
-		const data = loadedData['prod-data-' + month];
-		if(metric == 'deficit')	// Populate deficit into data
-		{
-			Object.keys(data).forEach(ticker => {
-				if(!data[ticker]['amount'] || data[ticker]['amount'] == 0){data[ticker]['deficit'] = 0; return;}
-				data[ticker]['deficit'] = (data[ticker]['amount'] - (data[ticker]['consumed'] || 0)) * data[ticker]['volume'] / data[ticker]['amount'];
-			});
-		}
-		generateTopProdGraph(container, data, month, metric, fullScreen);  // Use the JSON data
-	})();
-}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   MatHistory: () => (/* binding */ MatHistory)\n/* harmony export */ });\n/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ \"./src/core.ts\");\n/* harmony import */ var _staticData_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../staticData/constants */ \"./src/staticData/constants.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n\n\nclass MatHistory {\n    constructor(loadedData, urlParams) {\n        this.id = \"matHistory\";\n        this.displayName = \"MAT History\";\n        this.configFieldIDs = [\"metric\", \"ticker\"];\n        this.loadedData = loadedData;\n        this.urlParams = urlParams;\n    }\n    setConfigs(useURLParams) {\n        const updateFunc = function () { (0,_core__WEBPACK_IMPORTED_MODULE_0__.switchPlot)(); };\n        const configDiv = document.getElementById(\"selectorSubtypes\");\n        if (configDiv) {\n            (0,_utils__WEBPACK_IMPORTED_MODULE_2__.clearChildren)(configDiv);\n        }\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"metric\", \"Metric: \", { prettyValues: [\"Volume\", \"Profit\", \"Price\", \"Produced\", \"Consumption\", \"Surplus\"], values: [\"volume\", \"profit\", \"price\", \"amount\", \"consumed\", \"surplus\"] }, useURLParams ? this.urlParams.metric : undefined, updateFunc));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"input\", \"ticker\", \"Ticker: \", undefined, useURLParams && this.urlParams.ticker ? this.urlParams.ticker : undefined, updateFunc));\n    }\n    generatePlot(configValues, plotContainerID) {\n        return __awaiter(this, void 0, void 0, function* () {\n            var _a, _b;\n            if (!configValues.ticker || configValues.ticker == \"\") {\n                return;\n            }\n            // Get Data\n            const totalTickerData = [];\n            for (var i = 0; i < _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months.length; i++) {\n                const monthData = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"prod\", _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months[i]);\n                totalTickerData.push(monthData[((_a = configValues.ticker) !== null && _a !== void 0 ? _a : \"\").toUpperCase()]);\n            }\n            const tickerData = []; // Data for the specific metric\n            const validMonths = []; // Months with data\n            totalTickerData.forEach((data, i) => {\n                if (!data) {\n                    return;\n                }\n                validMonths.push(_staticData_constants__WEBPACK_IMPORTED_MODULE_1__.monthsPretty[i]);\n                switch (configValues.metric) {\n                    case \"volume\":\n                        tickerData.push(data.volume);\n                        break;\n                    case \"profit\":\n                        tickerData.push(data.profit);\n                        break;\n                    case \"price\":\n                        tickerData.push(data.amount == 0 ? 0 : data.volume / data.amount);\n                        break;\n                    case \"amount\":\n                        tickerData.push(data.amount);\n                        break;\n                    case \"consumed\":\n                        tickerData.push(data.consumed);\n                        break;\n                    case \"surplus\":\n                        tickerData.push(data.amount - data.consumed);\n                        break;\n                }\n            });\n            if (validMonths.length == 0) {\n                return;\n            }\n            const titles = {\n                'profit': 'Production Profit History of ',\n                'volume': 'Production Volume History of ',\n                'amount': 'Production Amount History of ',\n                'price': 'Price History of ',\n                'consumed': 'Consumption History of ',\n                'surplus': 'Surplus Production History of '\n            };\n            const yAxis = {\n                'profit': 'Daily Profit [$/day]',\n                'volume': 'Daily Volume [$/day]',\n                'amount': 'Daily Production [per day]',\n                'price': 'Price [$]',\n                'consumed': 'Daily Consumption [per day]',\n                'surplus': 'Daily Surplus [per day]'\n            };\n            // Create graph\n            (0,_core__WEBPACK_IMPORTED_MODULE_0__.createGraph)(plotContainerID, [{ x: validMonths, y: tickerData, type: 'bar' }], Object.assign(Object.assign({ width: this.urlParams.hideOptions !== undefined ? undefined : 800, height: this.urlParams.hideOptions !== undefined ? undefined : 400, autosize: this.urlParams.hideOptions !== undefined }, (this.urlParams.hideOptions !== undefined ? { margin: {\n                    l: 60, // left\n                    r: 10, // right\n                    t: 40, // top\n                    b: 60 // bottom\n                } } : {})), { title: { text: titles[configValues.metric] + ((_b = configValues.ticker) !== null && _b !== void 0 ? _b : \"\").toUpperCase() }, xaxis: {\n                    title: { text: 'Month' }\n                }, yaxis: {\n                    title: { text: yAxis[configValues.metric] }\n                } }), {});\n        });\n    }\n}\n\n\n//# sourceURL=webpack://reports/./src/graphs/matHistory.ts?\n}");
 
-function promiseGenerateMatGraph(container, ticker, metric, months, fullScreen)	// Metric is either 'profit', 'volume', or 'amount'
-{
-	// Validation/sanitizing
-	if(!ticker){return;}
-	ticker = ticker.toUpperCase();
-	
-	const validMonths = [];
-	const data = [];
-	
-	(async () => {
-		for(const month of months) {
-			if(!loadedData['prod-data-' + month])
-			{
-				loadedData['prod-data-' + month] = await fetch('data/prod-data-' + month + '.json?cb=' + Date.now()).then(response => response.json())
-			}
-			
-			const dataPoint = loadedData['prod-data-' + month][ticker]
-			if(dataPoint)
-			{
-				if(metric == 'price')
-				{
-					data.push(dataPoint['amount'] == 0 ? 0 : dataPoint['volume'] / dataPoint['amount']);
-				}
-				else if(metric == 'surplus')
-				{
-					data.push(dataPoint['amount'] - dataPoint['consumed'])
-				}
-				else
-				{
-					data.push(dataPoint[metric])
-				}
-				validMonths.push(month)
-				hasData = true;
-			}
-		};
-		
-		if(hasData)
-		{
-			generateMatGraph(container, validMonths.map(month => prettyMonthName(month)), data, ticker, metric, fullScreen)
-		}
-	})();
-}
+/***/ }),
 
-function generateTopProdGraph(container, prodData, month, metric, fullScreen)
-{
-	if(fullScreen){setFullscreen(container);}
-	const titles = {
-		'profit': 'Profit Materials',
-		'volume': 'Production Volumes',
-		'deficit': 'Deficits'
-	}
-	// Convert the data object into an array of [ticker, volume] pairs
-	const volumeArray = Object.entries(prodData).map(([ticker, info]) => ({
-		ticker,
-		volume: info[metric]
-	}));
+/***/ "./src/graphs/topCompanies.ts":
+/*!************************************!*\
+  !*** ./src/graphs/topCompanies.ts ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-	// Sort the array by volume in descending order
-	if(metric == 'deficit')
-	{
-		volumeArray.sort((a, b) => a.volume - b.volume);
-	}
-	else
-	{
-		volumeArray.sort((a, b) => b.volume - a.volume);
-	}
-	
-	
-	// Extract tickers and volumes into separate arrays
-	const tickers = volumeArray.map(item => item.ticker);
-	const volumes = volumeArray.map(item => item.volume);
-	Plotly.newPlot(container, {
-        data: [{ x: tickers, y: volumes, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: {width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
-					l: 60,  // left
-					r: 10,  // right
-					t: 40,  // top
-					b: 60   // bottom
-				}} : {}),
-			title: {text: 'Top ' + titles[metric] + ' - ' + prettyMonthName(month),
-					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
-			},
-			xaxis: {
-				title: {
-					text: 'Ticker',
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				range: [-0.5, 29.5],
-				tickangle: -45
-			},
-			yaxis: {
-				title: {
-					text: prettyModeNames[metric] + ' [$/day]',
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				range: [(metric == 'deficit' ? null : 0), (metric == 'deficit' ? 0 : null)],
-				gridcolor: '#323232'
-			},
-			plot_bgcolor: '#252525',
-			paper_bgcolor: '#252525',
-			dragmode: 'pan'
-		},
-		config: {
-			displayModeBar: true,
-			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
-			displaylogo: false,
-			scrollZoom: true,
-			responsive: true
-		}
-    });
-}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   TopCompanies: () => (/* binding */ TopCompanies)\n/* harmony export */ });\n/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ \"./src/core.ts\");\n/* harmony import */ var _staticData_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../staticData/constants */ \"./src/staticData/constants.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n\n\nclass TopCompanies {\n    constructor(loadedData, urlParams) {\n        this.id = \"topCompanies\";\n        this.displayName = \"Top Companies\";\n        this.configFieldIDs = [\"metric\", \"month\"];\n        this.loadedData = loadedData;\n        this.urlParams = urlParams;\n    }\n    setConfigs(useURLParams) {\n        const updateFunc = function () { (0,_core__WEBPACK_IMPORTED_MODULE_0__.switchPlot)(); };\n        const configDiv = document.getElementById(\"selectorSubtypes\");\n        if (configDiv) {\n            (0,_utils__WEBPACK_IMPORTED_MODULE_2__.clearChildren)(configDiv);\n        }\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"metric\", \"Metric: \", { prettyValues: [\"Volume\", \"Profit\"], values: [\"volume\", \"profit\"] }, useURLParams ? this.urlParams.metric : undefined, updateFunc));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_2__.addConfigField)(\"select\", \"month\", \"Month: \", { prettyValues: _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.monthsPretty, \"values\": _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months }, useURLParams && this.urlParams.month ? this.urlParams.month : _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months[_staticData_constants__WEBPACK_IMPORTED_MODULE_1__.months.length - 1], updateFunc));\n    }\n    generatePlot(configValues, plotContainerID) {\n        return __awaiter(this, void 0, void 0, function* () {\n            // Get Data\n            const companyData = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"company\", configValues.month);\n            const knownCompanies = yield (0,_utils__WEBPACK_IMPORTED_MODULE_2__.getData)(this.loadedData, \"knownCompanies\");\n            // Convert the data object into an array of [companyID, volume] pairs\n            const volumeArray = Object.entries(companyData.totals).map(([companyID, info]) => ({\n                companyID,\n                volume: info[configValues.metric]\n            }));\n            // Sort the array by volume in descending order\n            volumeArray.sort((a, b) => b.volume - a.volume);\n            // Extract tickers and volumes into separate arrays\n            const companyIDs = volumeArray.map(item => item.companyID);\n            const volumes = volumeArray.map(item => item.volume);\n            const companyNames = [];\n            companyIDs.forEach(id => {\n                companyNames.push(knownCompanies[id] || (id.slice(0, 5) + \"...\"));\n            });\n            // Create graph\n            (0,_core__WEBPACK_IMPORTED_MODULE_0__.createGraph)(plotContainerID, [{ x: companyNames, y: volumes, type: 'bar' }], Object.assign(Object.assign({ width: this.urlParams.hideOptions !== undefined ? undefined : 800, height: this.urlParams.hideOptions !== undefined ? undefined : 400, autosize: this.urlParams.hideOptions !== undefined }, (this.urlParams.hideOptions !== undefined ? { margin: {\n                    l: 60, // left\n                    r: 10, // right\n                    t: 40, // top\n                    b: 100 // bottom\n                } } : {})), { title: { text: 'Top Companies (' + _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.prettyModeNames[configValues.metric] + ') - ' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.prettyMonthName)(configValues.month) }, xaxis: {\n                    title: { text: 'Ticker' },\n                    range: [-0.5, 29.5]\n                }, yaxis: {\n                    title: { text: _staticData_constants__WEBPACK_IMPORTED_MODULE_1__.prettyModeNames[configValues.metric] + ' [$/day]' },\n                    range: [0, null]\n                } }), {});\n        });\n    }\n}\n\n\n//# sourceURL=webpack://reports/./src/graphs/topCompanies.ts?\n}");
 
-function generateTopCompanyGraph(container, companyData, knownCompanies, month, metric, fullScreen)
-{
-	if(fullScreen){setFullscreen(container);}
-	
-	// Convert the data object into an array of [companyID, volume] pairs
-	const volumeArray = Object.entries(companyData.totals).map(([companyID, info]) => ({
-		companyID,
-		volume: info[metric]
-	}));
+/***/ }),
 
-	// Sort the array by volume in descending order
-	volumeArray.sort((a, b) => b.volume - a.volume);
+/***/ "./src/graphs/topProduction.ts":
+/*!*************************************!*\
+  !*** ./src/graphs/topProduction.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-	// Extract tickers and volumes into separate arrays
-	const companyIDs = volumeArray.map(item => item.companyID);
-	const volumes = volumeArray.map(item => item.volume);
-	
-	const companyNames = [];
-	
-	// Print unknown top 40 companies
-	companyIDs.slice(0,40).forEach(id => {
-		if(!knownCompanies[id])
-		{
-			console.log(id)
-		}
-	});
-	
-	companyIDs.forEach(id => {
-		companyNames.push(knownCompanies[id] || (id.slice(0, 5) + "..."));
-	});
-	Plotly.newPlot(container, {
-        data: [{ x: companyNames, y: volumes, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
-					l: 60,  // left
-					r: 10,  // right
-					t: 40,  // top
-					b: 100   // bottom
-				}} : {}),
-			title: {text: 'Top Companies (' + prettyModeNames[metric] + ') - ' + prettyMonthName(month),
-					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
-			},
-			xaxis: {
-				title: {
-					text: 'Player',
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				range: [-0.5, 29.5],
-				tickangle: -45
-			},
-			yaxis: {
-				title: {
-					text: prettyModeNames[metric] + ' [$/day]',
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				range: [0, null],
-				gridcolor: '#323232'
-			},
-			plot_bgcolor: '#252525',
-			paper_bgcolor: '#252525',
-			dragmode: 'pan'
-		},
-		config: {
-			displayModeBar: true,
-			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
-			displaylogo: false,
-			scrollZoom: true,
-			responsive: true
-		}
-    });
-}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   TopProduction: () => (/* binding */ TopProduction)\n/* harmony export */ });\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils */ \"./src/utils.ts\");\n/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core */ \"./src/core.ts\");\n/* harmony import */ var _staticData_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../staticData/constants */ \"./src/staticData/constants.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n\n\nclass TopProduction {\n    constructor(loadedData, urlParams) {\n        this.id = \"topProduction\";\n        this.displayName = \"Top Production\";\n        this.configFieldIDs = [\"metric\", \"month\"];\n        this.loadedData = loadedData;\n        this.urlParams = urlParams;\n    }\n    setConfigs(useURLParams) {\n        const updateFunc = function () { (0,_core__WEBPACK_IMPORTED_MODULE_1__.switchPlot)(); };\n        const configDiv = document.getElementById(\"selectorSubtypes\");\n        if (configDiv) {\n            (0,_utils__WEBPACK_IMPORTED_MODULE_0__.clearChildren)(configDiv);\n        }\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_0__.addConfigField)(\"select\", \"metric\", \"Metric: \", { prettyValues: [\"Volume\", \"Profit\", \"Deficit\"], values: [\"volume\", \"profit\", \"deficit\"] }, useURLParams ? this.urlParams.metric : undefined, updateFunc));\n        configDiv === null || configDiv === void 0 ? void 0 : configDiv.appendChild((0,_utils__WEBPACK_IMPORTED_MODULE_0__.addConfigField)(\"select\", \"month\", \"Month: \", { prettyValues: _staticData_constants__WEBPACK_IMPORTED_MODULE_2__.monthsPretty, \"values\": _staticData_constants__WEBPACK_IMPORTED_MODULE_2__.months }, useURLParams && this.urlParams.month ? this.urlParams.month : _staticData_constants__WEBPACK_IMPORTED_MODULE_2__.months[_staticData_constants__WEBPACK_IMPORTED_MODULE_2__.months.length - 1], updateFunc));\n    }\n    generatePlot(configValues, plotContainerID) {\n        return __awaiter(this, void 0, void 0, function* () {\n            // Get Data\n            const prodData = yield (0,_utils__WEBPACK_IMPORTED_MODULE_0__.getData)(this.loadedData, \"prod\", configValues.month);\n            // Process Data\n            if (configValues.metric == 'deficit') // Populate deficit into data\n             {\n                Object.keys(prodData).forEach(ticker => {\n                    if (!prodData[ticker].amount || prodData[ticker].amount == 0) {\n                        prodData[ticker].deficit = 0;\n                        return;\n                    }\n                    prodData[ticker].deficit = (prodData[ticker].amount - (prodData[ticker].consumed || 0)) * prodData[ticker].volume / prodData[ticker].amount;\n                });\n            }\n            const titles = {\n                'profit': 'Profit Materials',\n                'volume': 'Production Volumes',\n                'deficit': 'Deficits'\n            };\n            // Convert the data object into an array of [ticker, volume] pairs\n            const volumeArray = Object.entries(prodData).map(([ticker, info]) => ({\n                ticker,\n                volume: info[configValues.metric]\n            }));\n            // Sort the array by volume in descending order\n            if (configValues.metric == 'deficit') {\n                volumeArray.sort((a, b) => a.volume - b.volume);\n            }\n            else {\n                volumeArray.sort((a, b) => b.volume - a.volume);\n            }\n            // Extract tickers and volumes into separate arrays\n            const tickers = volumeArray.map(item => item.ticker);\n            const volumes = volumeArray.map(item => item.volume);\n            // Create graph\n            (0,_core__WEBPACK_IMPORTED_MODULE_1__.createGraph)(plotContainerID, [{ x: tickers, y: volumes, type: 'bar' }], Object.assign(Object.assign({ width: this.urlParams.hideOptions !== undefined ? undefined : 800, height: this.urlParams.hideOptions !== undefined ? undefined : 400, autosize: this.urlParams.hideOptions !== undefined }, (this.urlParams.hideOptions !== undefined ? { margin: {\n                    l: 60, // left\n                    r: 10, // right\n                    t: 40, // top\n                    b: 60 // bottom\n                } } : {})), { title: { text: 'Top ' + titles[configValues.metric] + ' - ' + (0,_utils__WEBPACK_IMPORTED_MODULE_0__.prettyMonthName)(configValues.month) }, xaxis: {\n                    title: { text: 'Ticker' },\n                    range: [-0.5, 29.5]\n                }, yaxis: {\n                    title: { text: _staticData_constants__WEBPACK_IMPORTED_MODULE_2__.prettyModeNames[configValues.metric] + ' [$/day]' },\n                    range: [(configValues.metric == 'deficit' ? null : 0), (configValues.metric == 'deficit' ? 0 : null)]\n                } }), {});\n        });\n    }\n}\n\n\n//# sourceURL=webpack://reports/./src/graphs/topProduction.ts?\n}");
 
-function generateMatGraph(container, months, data, ticker, metric, fullScreen)
-{
-	console.log(fullScreen);
-	if(fullScreen){setFullscreen(container);}
-	
-	const titles = {
-		'profit': 'Production Profit History of ',
-		'volume': 'Production Volume History of ',
-		'amount': 'Production Amount History of ',
-		'price': 'Price History of ',
-		'consumed': 'Consumption History of ',
-		'surplus': 'Surplus Production History of '
-	}
-	const yAxis = {
-		'profit': 'Daily Profit [$/day]',
-		'volume': 'Daily Volume [$/day]',
-		'amount': 'Daily Production [per day]',
-		'price': 'Price [$]',
-		'consumed': 'Daily Consumption [per day]',
-		'surplus': 'Daily Surplus [per day]'
-	}
-	
-	Plotly.newPlot(container, {
-        data: [{ x: months, y: data, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
-					l: 60,  // left
-					r: 10,  // right
-					t: 40,  // top
-					b: 60   // bottom
-				}} : {}),
-			title: {text: titles[metric] + ticker,
-					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
-			},
-			xaxis: {
-				title: {
-					text: 'Month',
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				tickangle: -45
-			},
-			yaxis: {
-				title: {
-					text: yAxis[metric],
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				gridcolor: '#323232'
-			},
-			plot_bgcolor: '#252525',
-			paper_bgcolor: '#252525',
-			dragmode: 'pan'
-		},
-		config: {
-			displayModeBar: true,
-			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
-			displaylogo: false,
-			scrollZoom: true,
-			responsive: true
-		}
-    });
-}
+/***/ }),
 
-function generateCompanyGraph(container, chartType, data, companyName, month, metric, fullScreen)
-{
-	if(fullScreen){setFullscreen(container);}
-	
-	if(!data){return;}
-	
-	const titles = {
-		'profit': 'Production Profit Breakdown of ',
-		'volume': 'Production Volume Breakdown of ',
-	}
-	
-	var mats = Object.keys(data);
-	var values = mats.map(ticker => data[ticker][metric]);
-	
-	var indices = values.map((_, i) => i).sort((a, b) => values[b] - values[a]);
-	mats = indices.map(i => mats[i]);
-	values = indices.map(i => values[i]);
-	
-	if(chartType == 'treemap' || chartType == 'treemap-categories')
-	{
-		// Filter out negative values
-		indices = values
-			.map((v, i) => i)
-			.filter(i => values[i] >= 0);
-		mats = indices.map(i => mats[i]);
-		values = indices.map(i => values[i]);
+/***/ "./src/main.ts":
+/*!*********************!*\
+  !*** ./src/main.ts ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-		var colors = mats.map(m => materialsToColors[m] || '#000000');
-		var parents = chartType == 'treemap-categories'
-			? mats.map(m => materialsToCategories[m] || 'Other')
-			: mats.map(m => 'Total');
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   graphs: () => (/* binding */ graphs)\n/* harmony export */ });\n/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./core */ \"./src/core.ts\");\n/* harmony import */ var _graphs_companyHistory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./graphs/companyHistory */ \"./src/graphs/companyHistory.ts\");\n/* harmony import */ var _graphs_companyRank__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./graphs/companyRank */ \"./src/graphs/companyRank.ts\");\n/* harmony import */ var _graphs_companyTotals__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./graphs/companyTotals */ \"./src/graphs/companyTotals.ts\");\n/* harmony import */ var _graphs_matHistory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./graphs/matHistory */ \"./src/graphs/matHistory.ts\");\n/* harmony import */ var _graphs_topCompanies__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./graphs/topCompanies */ \"./src/graphs/topCompanies.ts\");\n/* harmony import */ var _graphs_topProduction__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./graphs/topProduction */ \"./src/graphs/topProduction.ts\");\n/* harmony import */ var _permalink__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./permalink */ \"./src/permalink.ts\");\n/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils */ \"./src/utils.ts\");\n\n\n\n\n\n\n\n\n\nwindow.onload = function () {\n    var _a;\n    // Do permalink stuff\n    (0,_permalink__WEBPACK_IMPORTED_MODULE_7__.addPermalink)();\n    // Populate the graph select with options\n    const graphSelect = document.getElementById(\"graphType\");\n    graphs.forEach(graph => {\n        (0,_utils__WEBPACK_IMPORTED_MODULE_8__.addOption)(graphSelect, graph.displayName, graph.id);\n    });\n    if (urlParams.type) {\n        graphSelect.value = urlParams.type;\n    }\n    graphSelect.addEventListener(\"change\", function () {\n        var _a;\n        (_a = graphs.find(graph => graph.id == graphSelect.value)) === null || _a === void 0 ? void 0 : _a.setConfigs();\n        (0,_core__WEBPACK_IMPORTED_MODULE_0__.switchPlot)();\n    });\n    // Initialize default values\n    (_a = graphs.find(graph => graph.id == graphSelect.value)) === null || _a === void 0 ? void 0 : _a.setConfigs(true);\n    (0,_core__WEBPACK_IMPORTED_MODULE_0__.switchPlot)();\n    // Set the graphs to fullscreen\n    if (urlParams.hideOptions !== undefined) {\n        const graphTypeContainer = document.getElementById('graphTypeContainer');\n        const topTabs = document.getElementById('topTabContainer');\n        const configDiv = document.getElementById(\"selectorSubtypes\");\n        const plotContainer = document.getElementById(\"mainPlot\");\n        if (topTabs && graphTypeContainer && configDiv) {\n            topTabs.style.display = 'none';\n            graphTypeContainer.style.display = 'none';\n            configDiv.style.display = 'none';\n            plotContainer === null || plotContainer === void 0 ? void 0 : plotContainer.classList.add(\"fullScreen\");\n        }\n    }\n};\nconst urlParams = Object.fromEntries(new URLSearchParams(window.location.search));\nconst loadedData = {};\nconst graphs = [\n    new _graphs_topProduction__WEBPACK_IMPORTED_MODULE_6__.TopProduction(loadedData, urlParams),\n    new _graphs_topCompanies__WEBPACK_IMPORTED_MODULE_5__.TopCompanies(loadedData, urlParams),\n    new _graphs_matHistory__WEBPACK_IMPORTED_MODULE_4__.MatHistory(loadedData, urlParams),\n    new _graphs_companyTotals__WEBPACK_IMPORTED_MODULE_3__.CompanyTotals(loadedData, urlParams),\n    new _graphs_companyHistory__WEBPACK_IMPORTED_MODULE_1__.CompanyHistory(loadedData, urlParams),\n    new _graphs_companyRank__WEBPACK_IMPORTED_MODULE_2__.CompanyRank(loadedData, urlParams)\n];\n\n\n//# sourceURL=webpack://reports/./src/main.ts?\n}");
 
-		var totalValue = 0;
-		var categoryValues = {};
-		for (const i of indices) {
-			totalValue += values[i];
-			const category = parents[i];
-			categoryValues[category] = (categoryValues[category] || 0) + values[i];
-		}
+/***/ }),
 
-		if (chartType == 'treemap-categories') {
-			for (const category in categoryValues) {
-				mats.push(category);
-				values.push(categoryValues[category]);
-				colors.push(materialCategoryColors[category] || '#000000');
-				parents.push('Total');
-			}
-		}
+/***/ "./src/permalink.ts":
+/*!**************************!*\
+  !*** ./src/permalink.ts ***!
+  \**************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-		values.push(totalValue);
-		mats.push('Total');
-		parents.push('');
-		colors.push('#252525');
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   addPermalink: () => (/* binding */ addPermalink),\n/* harmony export */   updatePermalink: () => (/* binding */ updatePermalink)\n/* harmony export */ });\n/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./main */ \"./src/main.ts\");\n\nfunction addPermalink() {\n    // Permalink stuff\n    const permalinkContainer = document.getElementById(\"permalinkContainer\");\n    const permalinkButton = document.getElementById(\"permalinkButton\");\n    const permalinkCopyButton = document.getElementById(\"permalinkCopyButton\");\n    const rprunCopyButton = document.getElementById(\"permalinkCopyButton-rprun\");\n    const permalinkOptionsButton = document.getElementById(\"hideOptions\");\n    const permalinkLatestMonth = document.getElementById(\"latestMonth\");\n    permalinkButton === null || permalinkButton === void 0 ? void 0 : permalinkButton.addEventListener(\"click\", function (e) {\n        e.stopPropagation();\n        const currentDisplay = permalinkContainer.style.display;\n        if (currentDisplay == \"none\") {\n            permalinkContainer.style.display = \"block\";\n        }\n        else {\n            permalinkContainer.style.display = \"none\";\n        }\n    });\n    document.addEventListener(\"click\", function (e) {\n        if (!permalinkContainer.contains(e.target) && !permalinkButton.contains(e.target)) {\n            permalinkContainer.style.display = \"none\";\n        }\n    });\n    permalinkCopyButton.addEventListener(\"click\", function () {\n        const permalinkElem = document.getElementById(\"permalink\");\n        if (permalinkElem.value && permalinkElem.value != \"\") {\n            navigator.clipboard.writeText(permalinkElem.value);\n        }\n    });\n    rprunCopyButton.addEventListener(\"click\", function () {\n        const permalinkElem = document.getElementById(\"permalink-rprun\");\n        if (permalinkElem.value && permalinkElem.value != \"\") {\n            navigator.clipboard.writeText(permalinkElem.value);\n        }\n    });\n    permalinkOptionsButton.addEventListener(\"change\", function () {\n        updatePermalink();\n    });\n    permalinkLatestMonth.addEventListener(\"change\", function () {\n        updatePermalink();\n    });\n}\nfunction updatePermalink() {\n    const graphSelect = document.getElementById(\"graphType\");\n    const permalinkInput = document.getElementById(\"permalink\");\n    const rprunInput = document.getElementById(\"permalink-rprun\");\n    const hideOptionsButton = document.getElementById(\"hideOptions\");\n    const latestMonthButton = document.getElementById(\"latestMonth\");\n    var permalink = \"https://pmmg-products.github.io/reports/?type=\" + graphSelect.value;\n    var rprunLink = \"XIT PRUNSTATS type-\" + graphSelect.value;\n    const graph = _main__WEBPACK_IMPORTED_MODULE_0__.graphs.find(obj => obj.id == graphSelect.value);\n    graph === null || graph === void 0 ? void 0 : graph.configFieldIDs.forEach(subtype => {\n        if (subtype == \"month\" && latestMonthButton.checked) {\n            return;\n        }\n        const inputElem = document.getElementById(subtype);\n        if (inputElem.value && inputElem.value != \"\") {\n            permalink += \"&\" + subtype + \"=\" + inputElem.value;\n            rprunLink += \" \" + subtype + \"-\" + inputElem.value;\n        }\n    });\n    if (hideOptionsButton.checked) {\n        permalink += \"&hideOptions\";\n        rprunLink += \" hideOptions\";\n    }\n    permalinkInput.value = permalink;\n    rprunInput.value = rprunLink;\n    return;\n}\n\n\n//# sourceURL=webpack://reports/./src/permalink.ts?\n}");
 
-		Plotly.newPlot(container, {
-			data: [
-				{
-					type: 'treemap',
-					labels: mats,
-					parents: parents,
-					values: values,
-					maxdepth: 2,
-					branchvalues: 'total',
-					marker: {
-						colors: colors,
-					},
-					tiling: {
-						pad: 0,
-					},
-					textposition: 'middle center',
-					hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>'
-				}
-			],
-			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
-					l: 10,  // left
-					r: 10,  // right
-					t: 40,  // top
-					b: 10   // bottom
-				}} : {}),
-				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
-					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
-				},
-				plot_bgcolor: '#252525',
-				paper_bgcolor: '#252525',
-			},
-			config: {
-				displaylogo: false,
-				responsive: true
-			}
-		});
-	}
-	else if(chartType == 'pie')
-	{
-		// Filter out negative values
-		indices = values
-			.map((v, i) => i)
-			.filter(i => values[i] >= 0);
-		mats = indices.map(i => mats[i]);
-		values = indices.map(i => values[i]);
-		
-		Plotly.newPlot(container, {
-			data: [{ labels: mats, values: values, type: 'pie', textinfo: 'label',textposition: 'inside', insidetextorientation: 'none', automargin: false, hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percent}<extra></extra>'}],
-			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
-					l: 10,  // left
-					r: 10,  // right
-					t: 40,  // top
-					b: 10   // bottom
-				}} : {}),
-				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
-						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
-				},
-				plot_bgcolor: '#252525',
-				paper_bgcolor: '#252525',
-			},
-			config: {
-				displayModeBar: true,
-				modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
-				displaylogo: false,
-				scrollZoom: true,
-				responsive: true
-			}
-		});
-	}
-	else
-	{
-		Plotly.newPlot(container, {
-			data: [{ x: mats, y: values, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-			layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
-					l: 60,  // left
-					r: 10,  // right
-					t: 40,  // top
-					b: 60   // bottom
-				}} : {}),
-				title: {text: titles[metric] + companyName + ' - ' + prettyMonthName(month),
-						font: {color: '#eee', family: '"Droid Sans", sans-serif'},
-				},
-				xaxis: {
-					title: {
-						text: 'Ticker',
-						font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-					},
-					tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-					range: [-0.5, Math.min(mats.length, 30) - 0.5],
-					tickangle: -45
-				},
-				yaxis: {
-					title: {
-						text: prettyModeNames[metric] + ' [$/day]',
-						font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-					},
-					tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-					range: [0, null],
-					gridcolor: '#323232'
-				},
-				plot_bgcolor: '#252525',
-				paper_bgcolor: '#252525',
-				dragmode: 'pan'
-			},
-			config: {
-				displayModeBar: true,
-				modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
-				displaylogo: false,
-				scrollZoom: true,
-				responsive: true
-			}
-		});
-	}
-}
+/***/ }),
 
-function generateCompanyHistoryGraph(container, months, data, companyName, metric, fullScreen)
-{
-	if(fullScreen){setFullscreen(container);}
-	
-	const titles = {
-		'profit': 'Production Profit History of ',
-		'volume': 'Production Volume History of ',
-	}
-	const yAxis = {
-		'profit': 'Daily Profit [$/day]',
-		'volume': 'Daily Volume [$/day]'
-	}
-	Plotly.newPlot(container, {
-        data: [{ x: months, y: data, type: 'bar' , marker: {color: 'rgb(247, 166, 0)'}, hovertemplate: '%{x}: %{y:,.3~s}<extra></extra>'}],
-        layout: { width: fullScreen ? undefined : 800, height: fullScreen ? undefined : 400, autosize: fullScreen, ...(fullScreen ? {margin: {
-					l: 60,  // left
-					r: 10,  // right
-					t: 40,  // top
-					b: 60   // bottom
-				}} : {}),
-			title: {text: titles[metric] + companyName,
-					font: {color: '#eee', family: '"Droid Sans", sans-serif'},
-			},
-			xaxis: {
-				title: {
-					text: 'Month',
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				tickangle: -45
-			},
-			yaxis: {
-				title: {
-					text: yAxis[metric],
-					font: {color: '#bbb', family: '"Droid Sans", sans-serif'}
-				},
-				tickfont: {color: '#666', family: '"Droid Sans", sans-serif'},
-				gridcolor: '#323232'
-			},
-			plot_bgcolor: '#252525',
-			paper_bgcolor: '#252525',
-			dragmode: 'pan'
-		},
-		config: {
-			displayModeBar: true,
-			modeBarButtonsToRemove: ['lasso2d'],  // Remove unwanted buttons
-			displaylogo: false,
-			scrollZoom: true,
-			responsive: true
-		}
-    });
-}
+/***/ "./src/staticData/constants.ts":
+/*!*************************************!*\
+  !*** ./src/staticData/constants.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-function generateRankChart(containerID, currentData, prevData, companyName, currentMonth, fullScreen)
-{
-	if(fullScreen){setFullscreen(containerID);}
-	
-	if(!currentData){return;}
-		
-	const container = document.getElementById(containerID);
-	
-	const tickers = Object.keys(currentData);
-	const currentRanks = tickers.map(ticker => ({'ticker': ticker, 'currentRank': currentData[ticker].rank, 'data': currentData[ticker]}));
-	
-	currentRanks.forEach(mat => {
-		if(prevData && prevData[mat.ticker])
-		{
-			mat.prevRank = prevData[mat.ticker].rank;
-		}
-	});
-	
-	currentRanks.sort((x, y) => x.currentRank - y.currentRank);
-	
-	// Create title
-	const title = document.createElement("div");
-	title.textContent = "Production Ranking of " + companyName + " - " + prettyMonthName(currentMonth);
-	title.classList.add("title");
-	container.appendChild(title);
-	
-	// Start creating table
-	const table = document.createElement("table");
-	container.appendChild(table);
-	
-	// Table header
-	const header = document.createElement("thead");
-	table.appendChild(header);
-	const headRow = document.createElement("tr");
-	header.appendChild(headRow);
-	
-	const headers = ["Rank", "Ticker", "Amount [/day]", "Volume [$/day]", "Profit [$/day]"]
-	headers.forEach(label => {
-		const headerColumn = document.createElement("th");
-		headerColumn.textContent = label;
-		headRow.appendChild(headerColumn);
-	});
-	
-	const body = document.createElement("tbody");
-	table.appendChild(body);
-	
-	currentRanks.forEach(mat =>
-	{
-		const row = document.createElement("tr");
-		body.appendChild(row);
-		
-		const rankColumn = document.createElement("td");
-		const rankWrapper = document.createElement("div");
-		rankWrapper.style.display = "flex";
-		rankColumn.appendChild(rankWrapper);
-		
-		if(prevData)
-		{
-			const rankSymbol = document.createElement("div");
-			rankSymbol.style.width = "14px";
-			rankSymbol.style.minWidth = "14px";
-			rankSymbol.style.marginRight = "2px";
-			if(mat.prevRank && mat.prevRank != mat.currentRank)
-			{
-				const increasing = mat.prevRank && mat.prevRank < mat.currentRank;
-				rankSymbol.textContent = increasing ? "▼" : "▲";
-				rankSymbol.style.color = increasing ? "#d9534f" : "#5cb85c";
-			}
-			rankWrapper.appendChild(rankSymbol);
-		}
-		
-		const rankNum = document.createElement("div");
-		rankNum.textContent = mat.currentRank;
-		rankWrapper.appendChild(rankNum);
-		
-		row.appendChild(rankColumn);
-		
-		const tickerColumn = document.createElement("td")
-		tickerColumn.textContent = mat.ticker;
-		row.appendChild(tickerColumn);
-		
-		const amountColumn = document.createElement("td")
-		amountColumn.textContent = mat.data.amount.toLocaleString(undefined, {maximumFractionDigits: 1});
-		row.appendChild(amountColumn);
-		
-		const volumeColumn = document.createElement("td")
-		volumeColumn.textContent = "$" + mat.data.volume.toLocaleString(undefined, {notation: 'compact', maxixmumSignificantDigits: 3});
-		row.appendChild(volumeColumn);
-		
-		const profitColumn = document.createElement("td")
-		profitColumn.textContent = "$" + mat.data.profit.toLocaleString(undefined, {notation: 'compact', maxixmumSignificantDigits: 3});
-		row.appendChild(profitColumn);
-	});
-}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   fullMonthNames: () => (/* binding */ fullMonthNames),\n/* harmony export */   materialCategories: () => (/* binding */ materialCategories),\n/* harmony export */   materialCategoryColors: () => (/* binding */ materialCategoryColors),\n/* harmony export */   months: () => (/* binding */ months),\n/* harmony export */   monthsPretty: () => (/* binding */ monthsPretty),\n/* harmony export */   prettyModeNames: () => (/* binding */ prettyModeNames)\n/* harmony export */ });\nconst months = [\"mar25\", \"apr25\", \"may25\", \"jun25\", \"jul25\"];\nconst monthsPretty = [\"March 3025\", \"April 3025\", \"May 3025\", \"June 3025\", \"July 3025\"];\nconst fullMonthNames = {\n    \"jan\": \"January\",\n    \"feb\": \"February\",\n    \"mar\": \"March\",\n    \"apr\": \"April\",\n    \"may\": \"May\",\n    \"jun\": \"June\",\n    \"jul\": \"July\",\n    \"aug\": \"August\",\n    \"sep\": \"September\",\n    \"oct\": \"October\",\n    \"nov\": \"November\",\n    \"dec\": \"December\"\n};\nconst prettyModeNames = {\n    \"amount\": \"Amount\",\n    \"profit\": \"Profit\",\n    \"volume\": \"Volume\",\n    \"price\": \"Price\",\n    \"deficit\": \"Deficit\"\n};\nconst materialCategories = {\n    'Consumables (Luxury)': [\n        'ALE',\n        'COF',\n        'GIN',\n        'KOM',\n        'NST',\n        'PWO',\n        'REP',\n        'SC',\n        'VG',\n        'WIN'\n    ],\n    'Ship Engines': [\n        'AEN',\n        'AFP',\n        'AFR',\n        'ANZ',\n        'BFP',\n        'BFR',\n        'CHA',\n        'ENG',\n        'FIR',\n        'FSE',\n        'GCH',\n        'GEN',\n        'GNZ',\n        'HNZ',\n        'HPR',\n        'HTE',\n        'HYR',\n        'LFE',\n        'LFP',\n        'MFE',\n        'NOZ',\n        'QCR',\n        'RAG',\n        'RCS',\n        'RCT',\n        'SFE'\n    ],\n    'Software Tools': [\n        'DA',\n        'DD',\n        'DV',\n        'EDC',\n        'NN',\n        'OS'\n    ],\n    'Construction Parts': [\n        'AEF',\n        'AIR',\n        'DEC',\n        'FC',\n        'FLO',\n        'FLP',\n        'GC',\n        'GV',\n        'LIT',\n        'MGC',\n        'MHL',\n        'PSH',\n        'RSH',\n        'TCS',\n        'TRU',\n        'TSH'\n    ],\n    'Alloys': [\n        'AST',\n        'BGO',\n        'BOS',\n        'BRO',\n        'FAL',\n        'FET',\n        'RGO',\n        'WAL'\n    ],\n    'Consumable Bundles': [\n        'CBU',\n        'EBU',\n        'PBU',\n        'SBU',\n        'TBU'\n    ],\n    'Medical Equipment': [\n        'ADR',\n        'BND',\n        'PK',\n        'SEQ',\n        'STR',\n        'TUB'\n    ],\n    'Electronic Parts': [\n        'CD',\n        'DIS',\n        'FAN',\n        'MB',\n        'MPC',\n        'PCB',\n        'RAM',\n        'ROM',\n        'SEN',\n        'TPU',\n        'TRA'\n    ],\n    'Energy Systems': [\n        'CBL',\n        'CBM',\n        'CBS',\n        'POW',\n        'SOL',\n        'SP'\n    ],\n    'Minerals': [\n        'BER',\n        'BOR',\n        'BRM',\n        'CLI',\n        'GAL',\n        'HAL',\n        'LST',\n        'MAG',\n        'MGS',\n        'SCR',\n        'TAI',\n        'TCO',\n        'TS',\n        'ZIR'\n    ],\n    'Construction Materials': [\n        'CMK',\n        'EPO',\n        'GL',\n        'INS',\n        'MCG',\n        'MTC',\n        'NCS',\n        'NFI',\n        'NG',\n        'RG',\n        'SEA'\n    ],\n    'Consumables (Basic)': [\n        'DW',\n        'EXO',\n        'FIM',\n        'HMS',\n        'HSS',\n        'LC',\n        'MEA',\n        'MED',\n        'OVE',\n        'PDA',\n        'PT',\n        'RAT',\n        'SCN',\n        'WS'\n    ],\n    'Software Systems': [\n        'IDC',\n        'IMM',\n        'SNM',\n        'WAI'\n    ],\n    'Electronic Pieces': [\n        'BCO',\n        'BGC',\n        'CAP',\n        'HCC',\n        'LDI',\n        'MFK',\n        'MWF',\n        'SFK',\n        'SWF',\n        'TRN'\n    ],\n    'Software Components': [\n        'BAI',\n        'LD',\n        'MLI',\n        'NF',\n        'SA',\n        'SAL',\n        'WM'\n    ],\n    'Ores': [\n        'ALO',\n        'AUO',\n        'CUO',\n        'FEO',\n        'LIO',\n        'SIO',\n        'TIO'\n    ],\n    'Unit Prefabs': [\n        'BR1',\n        'BR2',\n        'BRS',\n        'CQL',\n        'CQM',\n        'CQS',\n        'CQT',\n        'DOU',\n        'FUN',\n        'HAB',\n        'LU',\n        'RDL',\n        'RDS',\n        'SU',\n        'TCU',\n        'WOR'\n    ],\n    'Ship Shields': [\n        'APT',\n        'ARP',\n        'AWH',\n        'BPT',\n        'BRP',\n        'BWH',\n        'SRP'\n    ],\n    'Electronic Devices': [\n        'AAR',\n        'AWF',\n        'BID',\n        'BMF',\n        'BSC',\n        'BWS',\n        'HD',\n        'HOG',\n        'HPC',\n        'MHP',\n        'RAD',\n        'SAR'\n    ],\n    'Metals': [\n        'AL',\n        'AU',\n        'CU',\n        'FE',\n        'LI',\n        'SI',\n        'STL',\n        'TI',\n        'W'\n    ],\n    'Electronic Systems': [\n        'ACS',\n        'ADS',\n        'CC',\n        'COM',\n        'CRU',\n        'FFC',\n        'LIS',\n        'LOG',\n        'STS',\n        'TAC',\n        'WR'\n    ],\n    'Textiles': [\n        'CF',\n        'COT',\n        'CTF',\n        'KV',\n        'NL',\n        'SIL',\n        'TK'\n    ],\n    'Plastics': [\n        'DCL',\n        'DCM',\n        'DCS',\n        'PE',\n        'PG',\n        'PSL',\n        'PSM',\n        'PSS'\n    ],\n    'Chemicals': [\n        'BAC',\n        'BL',\n        'BLE',\n        'CST',\n        'DDT',\n        'EES',\n        'ETC',\n        'FLX',\n        'IND',\n        'JUI',\n        'LCR',\n        'NAB',\n        'NR',\n        'NS',\n        'OLF',\n        'PFE',\n        'REA',\n        'SOI',\n        'TCL',\n        'THF'\n    ],\n    'Elements': [\n        'BE',\n        'C',\n        'CA',\n        'CL',\n        'ES',\n        'I',\n        'MG',\n        'NA',\n        'S',\n        'TA',\n        'TC',\n        'ZR'\n    ],\n    'Gases': [\n        'AMM',\n        'AR',\n        'F',\n        'H',\n        'HE',\n        'HE3',\n        'N',\n        'NE',\n        'O'\n    ],\n    'Ship Parts': [\n        'AGS',\n        'AHP',\n        'ATP',\n        'BGS',\n        'BHP',\n        'HHP',\n        'LHP',\n        'NV1',\n        'NV2',\n        'RHP',\n        'SSC',\n        'THP'\n    ],\n    'Drones': [\n        'CCD',\n        'DCH',\n        'DRF',\n        'RED',\n        'SDR',\n        'SRD',\n        'SUD'\n    ],\n    'Agricultural Products': [\n        'ALG',\n        'BEA',\n        'CAF',\n        'FOD',\n        'GRA',\n        'GRN',\n        'HCP',\n        'HER',\n        'HOP',\n        'MAI',\n        'MTP',\n        'MUS',\n        'NUT',\n        'PIB',\n        'PPA',\n        'RCO',\n        'RSI',\n        'VEG',\n        'VIT'\n    ],\n    'Construction Prefabs': [\n        'ABH',\n        'ADE',\n        'ASE',\n        'ATA',\n        'BBH',\n        'BDE',\n        'BSE',\n        'BTA',\n        'HSE',\n        'LBH',\n        'LDE',\n        'LSE',\n        'LTA',\n        'RBH',\n        'RDE',\n        'RSE',\n        'RTA'\n    ],\n    'Fuels': [\n        'FF',\n        'SF'\n    ],\n    'Ship Kits': [\n        'HCB',\n        'LCB',\n        'LFL',\n        'LSL',\n        'MCB',\n        'MFL',\n        'MSL',\n        'SCB',\n        'SFL',\n        'SSL',\n        'TCB',\n        'VCB',\n        'VSC',\n        'WCB'\n    ],\n    'Liquids': [\n        'BTS',\n        'H2O',\n        'HEX',\n        'LES'\n    ],\n    'Utility': [\n        'OFF',\n        'SUN',\n        'UTS'\n    ]\n};\nconst materialCategoryColors = {\n    \"Agricultural Products\": \"#0a4708\",\n    \"Alloys\": \"#946537\",\n    \"Chemicals\": \"#d04774\",\n    \"Construction Materials\": \"#3174ec\",\n    \"Construction Parts\": \"#426684\",\n    \"Construction Prefabs\": \"#28377b\",\n    \"Consumable Bundles\": \"#57232a\",\n    \"Consumables (Basic)\": \"#ba363c\",\n    \"Consumables (Luxury)\": \"#680000\",\n    \"Drones\": \"#a54d2b\",\n    \"Electronic Devices\": \"#6f2dac\",\n    \"Electronic Parts\": \"#7447d0\",\n    \"Electronic Pieces\": \"#906bd6\",\n    \"Electronic Systems\": \"#4c3365\",\n    \"Elements\": \"#564739\",\n    \"Energy Systems\": \"#2e5740\",\n    \"Fuels\": \"#6ba23c\",\n    \"Gases\": \"#198284\",\n    \"Liquids\": \"#6098c3\",\n    \"Medical Equipment\": \"#6ec36e\",\n    \"Metals\": \"#4f4f4f\",\n    \"Minerals\": \"#b28a62\",\n    \"Ores\": \"#6b707a\",\n    \"Plastics\": \"#791f62\",\n    \"Ship Engines\": \"#b24219\",\n    \"Ship Kits\": \"#b26d19\",\n    \"Ship Parts\": \"#b27c19\",\n    \"Ship Shields\": \"#d98c21\",\n    \"Software Components\": \"#a19248\",\n    \"Software Systems\": \"#554e1e\",\n    \"Software Tools\": \"#9a7b2c\",\n    \"Textiles\": \"#6b733a\",\n    \"Unit Prefabs\": \"#363435\",\n    \"Utility\": \"#baada1\"\n};\n\n\n//# sourceURL=webpack://reports/./src/staticData/constants.ts?\n}");
 
-// Util functions
-function prettyMonthName(monthStr)
-{
-	const monthAbv = monthStr.substring(0,3);
-	const monthNum = monthStr.substring(3);
-	
-	return fullMonthNames[monthAbv] + " 30" + monthNum;
-}
+/***/ }),
 
-// Remove all the children of a given element
-function clearChildren(elem)
-{
-	elem.textContent = "";
-	while(elem.children[0])
-	{
-		elem.removeChild(elem.children[0]);
-	}
-	return;
-}
+/***/ "./src/utils.ts":
+/*!**********************!*\
+  !*** ./src/utils.ts ***!
+  \**********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// Add options to a selector
-function addOptions(selector, options, values)
-{
-	for(var i = 0; i < options.length; i++)
-	{
-		const optionElem = document.createElement("option");
-		optionElem.textContent = options[i];
-		optionElem.value = values ? values[i] : options[i];
-		selector.appendChild(optionElem);
-	}
-}
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   addConfigField: () => (/* binding */ addConfigField),\n/* harmony export */   addOption: () => (/* binding */ addOption),\n/* harmony export */   clearChildren: () => (/* binding */ clearChildren),\n/* harmony export */   deepMerge: () => (/* binding */ deepMerge),\n/* harmony export */   getCompanyId: () => (/* binding */ getCompanyId),\n/* harmony export */   getData: () => (/* binding */ getData),\n/* harmony export */   getMatCategory: () => (/* binding */ getMatCategory),\n/* harmony export */   getMatColor: () => (/* binding */ getMatColor),\n/* harmony export */   prettyMonthName: () => (/* binding */ prettyMonthName)\n/* harmony export */ });\n/* harmony import */ var _staticData_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./staticData/constants */ \"./src/staticData/constants.ts\");\nvar __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\n\n// Add an option to a selector\nfunction addOption(selector, displayName, id) {\n    const optionElem = document.createElement(\"option\");\n    optionElem.textContent = displayName;\n    optionElem.value = id !== null && id !== void 0 ? id : displayName;\n    selector.appendChild(optionElem);\n}\n// Remove all the children of a given element\nfunction clearChildren(elem) {\n    elem.textContent = \"\";\n    while (elem.children[0]) {\n        elem.removeChild(elem.children[0]);\n    }\n    return;\n}\n// Add a config field\nfunction addConfigField(inputType, id, label, value, defaultValue, updateFunc, marginShift) {\n    const labelElem = document.createElement('label');\n    labelElem.textContent = label;\n    const inputElem = document.createElement(inputType);\n    inputElem.id = id;\n    inputElem.classList.add(\"plotSelector\");\n    if (inputType == 'select') {\n        addOptions(inputElem, value.prettyValues, value.values);\n    }\n    if (defaultValue) {\n        inputElem.value = defaultValue;\n    }\n    inputElem.addEventListener(\"change\", updateFunc);\n    labelElem.appendChild(inputElem);\n    const output = wrapInDiv(labelElem);\n    if (marginShift) {\n        output.style.marginLeft = marginShift;\n    }\n    return output;\n}\n// Wrap an element in an extra div\nfunction wrapInDiv(elem) {\n    const div = document.createElement('div');\n    div.appendChild(elem);\n    return div;\n}\n// Add options to a selector\nfunction addOptions(selector, prettyValues, values) {\n    for (var i = 0; i < prettyValues.length; i++) {\n        const optionElem = document.createElement(\"option\");\n        optionElem.textContent = prettyValues[i];\n        optionElem.value = values ? values[i] : prettyValues[i];\n        selector.appendChild(optionElem);\n    }\n}\n// Merge a default object with one entered by the user.\nfunction deepMerge(target, source) {\n    for (const key in source) {\n        if (source[key] &&\n            typeof source[key] === \"object\" &&\n            !Array.isArray(source[key])) {\n            // @ts-ignore\n            target[key] = deepMerge(target[key] || {}, source[key]);\n        }\n        else {\n            // @ts-ignore\n            target[key] = source[key];\n        }\n    }\n    return target;\n}\n// Generate pretty month name from id format: mar25\nfunction prettyMonthName(monthStr) {\n    const monthAbv = monthStr.substring(0, 3);\n    const monthNum = monthStr.substring(3);\n    return _staticData_constants__WEBPACK_IMPORTED_MODULE_0__.fullMonthNames[monthAbv] + \" 30\" + monthNum;\n}\n// Functions to deal with loading data\nfunction getData(loadedData, dataType, month) {\n    return __awaiter(this, void 0, void 0, function* () {\n        switch (dataType) {\n            case \"prod\":\n            case \"company\":\n                if (!loadedData[dataType + '-data-' + month]) {\n                    loadedData[dataType + '-data-' + month] = yield fetch('data/' + dataType + '-data-' + month + '.json?cb=' + Date.now()).then(response => response.json());\n                }\n                return loadedData[dataType + '-data-' + month];\n            case \"knownCompanies\":\n                if (!loadedData['known-companies']) {\n                    loadedData['known-companies'] = yield fetch('data/knownCompanies.json?cb=' + Date.now()).then(response => response.json());\n                }\n                return loadedData['known-companies'];\n        }\n    });\n}\nfunction getMatCategory(ticker) {\n    var _a;\n    return (_a = Object.entries(_staticData_constants__WEBPACK_IMPORTED_MODULE_0__.materialCategories).find(([_, tickers]) => tickers.includes(ticker))) === null || _a === void 0 ? void 0 : _a[0];\n}\nfunction getMatColor(ticker) {\n    var _a, _b;\n    return (_b = _staticData_constants__WEBPACK_IMPORTED_MODULE_0__.materialCategoryColors[(_a = getMatCategory(ticker)) !== null && _a !== void 0 ? _a : \"\"]) !== null && _b !== void 0 ? _b : \"#000000\";\n}\nfunction getCompanyId(companyName, loadedData) {\n    return __awaiter(this, void 0, void 0, function* () {\n        const knownCompanies = yield getData(loadedData, \"knownCompanies\");\n        // Pull from known companies\n        var companyID = Object.keys(knownCompanies).find(id => { var _a; return ((_a = knownCompanies[id]) !== null && _a !== void 0 ? _a : \"\").toLowerCase() == companyName.toLowerCase(); });\n        if (companyID) {\n            return companyID;\n        }\n        // Resort to FIO\n        console.log(\"Unknown username, querying FIO.\");\n        const fioResult = yield fetch('https://rest.fnar.net/user/' + companyName).then(response => response.json()).catch(error => { alert('Bad Response: Check Username'); console.error(error); });\n        companyID = fioResult === null || fioResult === void 0 ? void 0 : fioResult.CompanyId;\n        companyName = fioResult === null || fioResult === void 0 ? void 0 : fioResult.UserName;\n        // Temporarily add to the list of known companies preventing multiple FIO queries\n        knownCompanies[companyID] = companyName;\n        return companyID;\n    });\n}\n\n\n//# sourceURL=webpack://reports/./src/utils.ts?\n}");
 
-function wrapInDiv(elem)	// Wrap selector element in a div to center it and give it margin
-{
-	const div = document.createElement('div');
-	
-	div.appendChild(elem);
-	
-	return div;
-}
+/***/ })
 
-function addInput(inputType, id, label, values, defaultValue)
-{
-	const labelElem = document.createElement('label');
-	labelElem.textContent = label;
-	
-	const inputElem = document.createElement(inputType);
-	inputElem.id = id;
-	inputElem.classList.add("plotSelector");
-	if(inputType == 'select')
-	{
-		addOptions(inputElem, values[0], values[1]);
-	}
-	
-	if(defaultValue)
-	{
-		inputElem.value = defaultValue;
-	}
-	
-	inputElem.addEventListener("change", function() {
-		switchPlot();
-	});
-	
-	labelElem.appendChild(inputElem);
-	
-	return wrapInDiv(labelElem);
-}
-
-async function getCompanyInfo()
-{
-	const usernameInput = document.getElementById('username');
-	var companyID;
-	var companyName;
-	
-	if(!usernameInput.value){return;}
-	
-	(async () => {
-		if(!loadedData['known-companies'])
-		{
-			loadedData['known-companies'] = await fetch('data/knownCompanies2.json?cb=' + Date.now()).then(response => response.json())
-		}
-		
-		const match = Object.entries(loadedData['known-companies']).find(([id, username]) => username && (username.toLowerCase() === usernameInput.value.toLowerCase()));
-		
-		if(match)
-		{
-			[companyID, companyName] = match;
-		}
-		else
-		{
-			const fioResult = fetch('https://rest.fnar.net/user/' + usernameInput.value).then(response => response.json()).catch(error => {alert('Bad Response: Check Username'); console.error(error)});
-			companyID = fioResult.CompanyId;
-			companyName = fioResult.UserName;
-		}
-		
-		if(!companyID || !companyName){return;}
-		
-		const companyIDInput = document.getElementById('companyID');
-		companyIDInput.value = companyID;
-		
-		const companyNameInput = document.getElementById('companyName');
-		companyNameInput.value = companyName;
-		
-		switchPlot();
-	})();
-}
-
-function setFullscreen(container)
-{
-	const elem = document.getElementById(container);
-	if(!elem){return;}
-	elem.classList.add("fullScreen");
-}
-
-const fullMonthNames = {
-	"jan": "January",
-	"feb": "February",
-	"mar": "March",
-	"apr": "April",
-	"may": "May",
-	"jun": "June",
-	"jul": "July",
-	"aug": "August",
-	"sep": "September",
-	"oct": "October",
-	"nov": "November",
-	"dec": "December"
-}
-
-const prettyModeNames = {
-	"amount": "Amount",
-	"profit": "Profit",
-	"volume": "Volume",
-	"price": "Price",
-	"deficit": "Deficit"
-}
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/main.ts");
+/******/ 	
+/******/ })()
+;
