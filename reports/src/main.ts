@@ -6,6 +6,7 @@ import { Graph } from "./graphs/graph";
 import { MatHistory } from "./graphs/matHistory";
 import { TopCompanies } from "./graphs/topCompanies";
 import { TopProduction } from "./graphs/topProduction";
+import { UniverseHistory } from "./graphs/universeHistory";
 import { addPermalink, updatePermalink } from "./permalink";
 import { addOption } from "./utils";
 
@@ -57,6 +58,7 @@ export const graphs: Graph[] = [
 	new TopProduction(loadedData, urlParams),
 	new TopCompanies(loadedData, urlParams),
 	new MatHistory(loadedData, urlParams),
+	new UniverseHistory(loadedData, urlParams),
 	new CompanyTotals(loadedData, urlParams),
 	new CompanyHistory(loadedData, urlParams),
 	new CompanyRank(loadedData, urlParams)
