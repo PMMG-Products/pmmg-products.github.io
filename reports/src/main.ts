@@ -7,7 +7,8 @@ import { MatHistory } from "./graphs/matHistory";
 import { TopCompanies } from "./graphs/topCompanies";
 import { TopProduction } from "./graphs/topProduction";
 import { UniverseHistory } from "./graphs/universeHistory";
-import { addPermalink, updatePermalink } from "./permalink";
+import { MarketOverview } from "./graphs/marketOverview";
+import { addPermalink } from "./permalink";
 import { addOption } from "./utils";
 
 window.onload = function() {
@@ -59,6 +60,7 @@ export const graphs: Graph[] = [
 	new TopCompanies(loadedData, urlParams),
 	new MatHistory(loadedData, urlParams),
 	new UniverseHistory(loadedData, urlParams),
+    new MarketOverview(loadedData, urlParams),
 	new CompanyTotals(loadedData, urlParams),
 	new CompanyHistory(loadedData, urlParams),
 	new CompanyRank(loadedData, urlParams)
