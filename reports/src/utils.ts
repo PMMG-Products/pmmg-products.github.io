@@ -102,12 +102,13 @@ export function prettyMonthName(monthStr: string)
 }
 
 // Functions to deal with loading data
-export async function getData(loadedData: any, dataType: string, month?: string)	// dataType is either: prod, company, or knownCompanies
+export async function getData(loadedData: any, dataType: string, month?: string)	// dataType is either: prod, company, base, universe, or knownCompanies
 {
 	switch(dataType)
 	{
 		case "prod":
 		case "company":
+		case "base":
 			if(!loadedData[dataType + '-data-' + month])
 			{
 				loadedData[dataType + '-data-' + month] = await fetch('data/' + dataType + '-data-' + month + '.json?cb=' + Date.now()).then(response => response.json());
@@ -119,6 +120,12 @@ export async function getData(loadedData: any, dataType: string, month?: string)
 				loadedData['known-companies'] = await fetch('data/knownCompanies.json?cb=' + Date.now()).then(response => response.json());
 			}
 			return loadedData['known-companies']
+		case "universe":
+			if(!loadedData['universe-data']) 
+			{ 
+				loadedData['universe-data'] = await fetch('data/universe-data.json?cb=' + Date.now()).then(response => response.json());
+			}
+			return loadedData['universe-data']
 	}
 }
 

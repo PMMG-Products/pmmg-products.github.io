@@ -26,7 +26,7 @@ export class TopCompanies implements Graph {
             clearChildren(configDiv);
         }
 
-        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit"], values: ["volume", "profit"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
+        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases"], values: ["volume", "profit", "bases"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
         configDiv?.appendChild(addConfigField("select", "month", "Month: ", {prettyValues: monthsPretty, "values": months}, useURLParams && this.urlParams.month ? this.urlParams.month : months[months.length - 1], updateFunc));
         
     }
@@ -34,11 +34,11 @@ export class TopCompanies implements Graph {
     async generatePlot(configValues: any, plotContainerID: string)
     {
         // Get Data
-        const companyData = await getData(this.loadedData, "company", configValues.month);
+        const companyData = await getData(this.loadedData, configValues.metric == "bases" ? "base" : "company", configValues.month);
         const knownCompanies = await getData(this.loadedData, "knownCompanies");
         
         // Convert the data object into an array of [companyID, volume] pairs
-        const volumeArray = Object.entries(companyData.totals).map(([companyID, info]) => ({
+        const volumeArray = Object.entries(configValues.metric == "bases" ? companyData : companyData.totals).map(([companyID, info]) => ({
             companyID,
             volume: (info as any)[configValues.metric]
         }));
@@ -73,7 +73,7 @@ export class TopCompanies implements Graph {
                     range: [-0.5, 29.5]
                 },
                 yaxis: {
-                    title: {text: prettyModeNames[configValues.metric] + ' [$/day]'},
+                    title: {text: configValues.metric == "bases" ? "Bases" : prettyModeNames[configValues.metric] + ' [$/day]'},
                     range: [0, null]
                 }
             }, {})

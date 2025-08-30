@@ -26,7 +26,7 @@ export class CompanyHistory implements Graph {
             clearChildren(configDiv);
         }
 
-        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit"], values: ["volume", "profit"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
+        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases"], values: ["volume", "profit", "bases"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
         configDiv?.appendChild(addConfigField("input", "companyName", "Username: ", undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, "-27px"));
         
     }
@@ -47,32 +47,28 @@ export class CompanyHistory implements Graph {
         const fullCompanyData = [] as any[];    // Company data across the months
         for(var i = 0; i < months.length; i++)
         {
-            const monthData = await getData(this.loadedData, "company", months[i]);
-            fullCompanyData.push(monthData.individual[companyID]);
+            const monthData = await getData(this.loadedData, configValues.metric == "bases" ? "base" : "company", months[i]);
+            fullCompanyData.push(configValues.metric == "bases" ? monthData[companyID] : monthData.totals[companyID]);
         }
-
+        
         const validMonths = [] as string[]; // Months with data
         const companyData = [] as number[]; // Company data for specific metric
         fullCompanyData.forEach((data, i) => {
             if(!data){return;}
-
-            var metric = 0;   // Metric value for this month
             validMonths.push(monthsPretty[i]);
-            Object.keys(data as any).forEach((ticker: string) => {
-                metric += data[ticker]?.[configValues.metric] ?? 0;
-            });
-
-            companyData.push(metric);
+            companyData.push(data[configValues.metric]);
         });
 
         // Create graph
         const titles = {
             'profit': 'Production Profit History of ',
             'volume': 'Production Volume History of ',
+            'bases': 'Base Count History of '
         } as any
         const yAxis = {
             'profit': 'Daily Profit [$/day]',
-            'volume': 'Daily Volume [$/day]'
+            'volume': 'Daily Volume [$/day]',
+            'bases': 'Bases'
         } as any
         createGraph(plotContainerID, [{x: validMonths, y: companyData, type: 'bar'}], 
         {
