@@ -52,8 +52,8 @@ export class MarketOverview implements Graph {
             if (!tickerData) {
                 continue;
             }
-            labels.push(knownCompanies[key] ?? key);
-            parents.push("");
+            labels.push(knownCompanies[key] ?? (key.substring(0, 5) + "..."));
+            parents.push("Total");
             values.push(tickerData.amount);
             totalVolume += tickerData.volume;
             totalProfit += tickerData.profit;
@@ -63,6 +63,10 @@ export class MarketOverview implements Graph {
         if (labels.length === 0) {
             return;
         }
+
+        labels.push("Total");
+        parents.push("");
+        values.push(totalAmount);
 
         const formatMoney = (num: number) => "$" + num.toLocaleString(undefined, { maximumFractionDigits: 0 });
         const title = `${ticker} Market - ${prettyMonthName(configValues.month)}`

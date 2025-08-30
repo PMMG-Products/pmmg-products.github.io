@@ -134,7 +134,10 @@ export class CompanyRank implements Graph {
         tableData = indices.map(i => tableData[i]);
         tableDisplay = indices.map(i => tableDisplay[i]);
 
-        const title = "Production Ranking of " + companyName + " - " + prettyMonthName(configValues.month);
+        // Get overall ranks for the title
+        const volumeRank = fullCompanyData.totals.volumeRank;
+
+        const title = "Production Ranking of " + companyName + " - " + prettyMonthName(configValues.month) + "\nVolume: #" + fullCompanyData.totals[companyID].volumeRank + ", Profit: #" + fullCompanyData.totals[companyID].profitRank;
 
         const headers = ["Rank", "Ticker", "Amount [/day]", "Volume [$/day]", "Profit [$/day]"];
 
