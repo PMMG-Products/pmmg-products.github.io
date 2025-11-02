@@ -169,7 +169,7 @@ export class CompanyTotals implements Graph {
         else if(configValues.chartType == "pie")
         {
             // Create graph
-            createGraph(plotContainerID, [{labels: categories, values: catData, type: 'pie', textinfo: 'label',textposition: 'inside', insidetextorientation: 'none', automargin: false}], 
+            createGraph(plotContainerID, [{labels: categories, values: catData, type: 'pie', textinfo: 'label',textposition: 'inside', insidetextorientation: 'none', automargin: false, hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percent}<extra></extra>'}], 
                 {
                     width: this.urlParams.hideOptions !== undefined ? undefined : 800,
                     height: this.urlParams.hideOptions !== undefined ? undefined : 400,

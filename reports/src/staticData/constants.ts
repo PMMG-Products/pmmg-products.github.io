@@ -1,5 +1,5 @@
-export const months = ["mar25", "apr25", "may25", "jun25", "jul25", "aug25", "sep25"];
-export const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025", "July 3025", "August 3025", "September 3025"];
+export const months = ["mar25", "apr25", "may25", "jun25", "jul25", "aug25", "sep25", "oct25"];
+export const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025", "July 3025", "August 3025", "September 3025", "October 3025"];
 
 export const fullMonthNames = {
 	"jan": "January",
