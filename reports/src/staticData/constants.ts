@@ -64,7 +64,9 @@ export const materialCategories: Record<string, string[]>= {
 		'RAG',
 		'RCS',
 		'RCT',
-		'SFE'
+		'SFE',
+		'VOE',
+		'VOR'
 	],
 	'Software Tools': [
 		'DA',
@@ -93,6 +95,7 @@ export const materialCategories: Record<string, string[]>= {
 		'TSH'
 	],
 	'Alloys': [
+		'ALR',
 		'AST',
 		'BGO',
 		'BOS',
@@ -100,7 +103,8 @@ export const materialCategories: Record<string, string[]>= {
 		'FAL',
 		'FET',
 		'RGO',
-		'WAL'
+		'WAL',
+		'WRH'
 	],
 	'Consumable Bundles': [
 		'CBU',
@@ -189,6 +193,15 @@ export const materialCategories: Record<string, string[]>= {
 		'SNM',
 		'WAI'
 	],
+	'Infrastructure': [
+		'GWS',
+		'PFG',
+		'SDM',
+		'SPT',
+		'SST',
+		'TOR',
+		'TRS'
+	],
 	'Electronic Pieces': [
 		'BCO',
 		'BGC',
@@ -216,6 +229,7 @@ export const materialCategories: Record<string, string[]>= {
 		'CUO',
 		'FEO',
 		'LIO',
+		'REO',
 		'SIO',
 		'TIO'
 	],
@@ -223,6 +237,8 @@ export const materialCategories: Record<string, string[]>= {
 		'BR1',
 		'BR2',
 		'BRS',
+		'BSU',
+		'CPU',
 		'CQL',
 		'CQM',
 		'CQS',
@@ -266,6 +282,7 @@ export const materialCategories: Record<string, string[]>= {
 		'CU',
 		'FE',
 		'LI',
+		'RE',
 		'SI',
 		'STL',
 		'TI',
@@ -314,6 +331,7 @@ export const materialCategories: Record<string, string[]>= {
 		'FLX',
 		'IND',
 		'JUI',
+		'KRE',
 		'LCR',
 		'NAB',
 		'NR',
@@ -346,6 +364,7 @@ export const materialCategories: Record<string, string[]>= {
 		'H',
 		'HE',
 		'HE3',
+		'KR',
 		'N',
 		'NE',
 		'O'
@@ -356,6 +375,7 @@ export const materialCategories: Record<string, string[]>= {
 		'ATP',
 		'BGS',
 		'BHP',
+		'HAM',
 		'HHP',
 		'LHP',
 		'NV1',
@@ -415,7 +435,8 @@ export const materialCategories: Record<string, string[]>= {
 	],
 	'Fuels': [
 		'FF',
-		'SF'
+		'SF',
+		'VF'
 	],
 	'Ship Kits': [
 		'HCB',
@@ -430,6 +451,7 @@ export const materialCategories: Record<string, string[]>= {
 		'SSL',
 		'TCB',
 		'VCB',
+		'VFT',
 		'VSC',
 		'WCB'
 	],
@@ -465,6 +487,7 @@ export const materialCategoryColors = {
 	"Energy Systems": "#2e5740",
 	"Fuels": "#6ba23c",
 	"Gases": "#198284",
+	"Infrastructure": "#1e1e8c",
 	"Liquids": "#6098c3",
 	"Medical Equipment": "#6ec36e",
 	"Metals": "#4f4f4f",
