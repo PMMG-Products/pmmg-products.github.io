@@ -95,6 +95,7 @@ export const materialCategories: Record<string, string[]>= {
 		'TSH'
 	],
 	'Alloys': [
+		'ALR',
 		'AST',
 		'BGO',
 		'BOS',
@@ -103,7 +104,6 @@ export const materialCategories: Record<string, string[]>= {
 		'FET',
 		'RGO',
 		'WAL',
-		'ALR',
 		'WRH'
 	],
 	'Consumable Bundles': [
@@ -220,6 +220,7 @@ export const materialCategories: Record<string, string[]>= {
 		'CUO',
 		'FEO',
 		'LIO',
+		'REO',
 		'SIO',
 		'TIO',
 		'REO'
@@ -228,6 +229,8 @@ export const materialCategories: Record<string, string[]>= {
 		'BR1',
 		'BR2',
 		'BRS',
+		'BSU',
+		'CPU',
 		'CQL',
 		'CQM',
 		'CQS',
@@ -273,6 +276,7 @@ export const materialCategories: Record<string, string[]>= {
 		'CU',
 		'FE',
 		'LI',
+		'RE',
 		'SI',
 		'STL',
 		'TI',
@@ -322,6 +326,7 @@ export const materialCategories: Record<string, string[]>= {
 		'FLX',
 		'IND',
 		'JUI',
+		'KRE',
 		'LCR',
 		'NAB',
 		'NR',
@@ -355,6 +360,7 @@ export const materialCategories: Record<string, string[]>= {
 		'H',
 		'HE',
 		'HE3',
+		'KR',
 		'N',
 		'NE',
 		'O',
@@ -366,6 +372,7 @@ export const materialCategories: Record<string, string[]>= {
 		'ATP',
 		'BGS',
 		'BHP',
+		'HAM',
 		'HHP',
 		'LHP',
 		'NV1',
@@ -442,6 +449,7 @@ export const materialCategories: Record<string, string[]>= {
 		'SSL',
 		'TCB',
 		'VCB',
+		'VFT',
 		'VSC',
 		'WCB',
 		'VFT'
