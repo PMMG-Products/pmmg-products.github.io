@@ -1,5 +1,5 @@
-export const months = ["mar25", "apr25", "may25", "jun25", "jul25", "aug25", "sep25", "oct25"];
-export const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025", "July 3025", "August 3025", "September 3025", "October 3025"];
+export const months = ["mar25", "apr25", "may25", "jun25", "jul25", "aug25", "sep25", "oct25", "nov25"];
+export const monthsPretty = ["March 3025", "April 3025", "May 3025", "June 3025", "July 3025", "August 3025", "September 3025", "October 3025", "November 3025"];
 
 export const fullMonthNames = {
 	"jan": "January",
@@ -64,7 +64,9 @@ export const materialCategories: Record<string, string[]>= {
 		'RAG',
 		'RCS',
 		'RCT',
-		'SFE'
+		'SFE',
+		'VOE',
+		'VOR'
 	],
 	'Software Tools': [
 		'DA',
@@ -100,7 +102,9 @@ export const materialCategories: Record<string, string[]>= {
 		'FAL',
 		'FET',
 		'RGO',
-		'WAL'
+		'WAL',
+		'ALR',
+		'WRH'
 	],
 	'Consumable Bundles': [
 		'CBU',
@@ -217,7 +221,8 @@ export const materialCategories: Record<string, string[]>= {
 		'FEO',
 		'LIO',
 		'SIO',
-		'TIO'
+		'TIO',
+		'REO'
 	],
 	'Unit Prefabs': [
 		'BR1',
@@ -235,7 +240,9 @@ export const materialCategories: Record<string, string[]>= {
 		'RDS',
 		'SU',
 		'TCU',
-		'WOR'
+		'WOR',
+		'BSU',
+		'CPU'
 	],
 	'Ship Shields': [
 		'APT',
@@ -269,7 +276,8 @@ export const materialCategories: Record<string, string[]>= {
 		'SI',
 		'STL',
 		'TI',
-		'W'
+		'W',
+		'RE'
 	],
 	'Electronic Systems': [
 		'ACS',
@@ -323,7 +331,8 @@ export const materialCategories: Record<string, string[]>= {
 		'REA',
 		'SOI',
 		'TCL',
-		'THF'
+		'THF',
+		'KRE'
 	],
 	'Elements': [
 		'BE',
@@ -348,7 +357,8 @@ export const materialCategories: Record<string, string[]>= {
 		'HE3',
 		'N',
 		'NE',
-		'O'
+		'O',
+		'KR'
 	],
 	'Ship Parts': [
 		'AGS',
@@ -362,7 +372,8 @@ export const materialCategories: Record<string, string[]>= {
 		'NV2',
 		'RHP',
 		'SSC',
-		'THP'
+		'THP',
+		'HAM'
 	],
 	'Drones': [
 		'CCD',
@@ -415,7 +426,8 @@ export const materialCategories: Record<string, string[]>= {
 	],
 	'Fuels': [
 		'FF',
-		'SF'
+		'SF',
+		'VF'
 	],
 	'Ship Kits': [
 		'HCB',
@@ -431,7 +443,8 @@ export const materialCategories: Record<string, string[]>= {
 		'TCB',
 		'VCB',
 		'VSC',
-		'WCB'
+		'WCB',
+		'VFT'
 	],
 	'Liquids': [
 		'BTS',
@@ -443,6 +456,15 @@ export const materialCategories: Record<string, string[]>= {
 		'OFF',
 		'SUN',
 		'UTS'
+	],
+	'Infrastructure': [
+		'GWS',
+		'PFG',
+		'SDM',
+		'SST',
+		'SPT',
+		'TRS',
+		'TOR'
 	]
 }
 
@@ -480,5 +502,6 @@ export const materialCategoryColors = {
 	"Software Tools": "#9a7b2c",
 	"Textiles": "#6b733a",
 	"Unit Prefabs": "#363435",
-	"Utility": "#baada1"
+	"Utility": "#baada1",
+	"Infrastructure": "#252551"
 } as any;
