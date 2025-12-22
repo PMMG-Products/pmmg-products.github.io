@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrUn Financial Reports</title>
+	<link rel="stylesheet" href="styles.css">
+	<link rel="icon" type="image/x-icon" href="icon128.png">
+	<script src="main.js"></script>
+	<script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+<div class="topTabContainer" id="topTabContainer">
+	<div>
+		<div class="topTab">
+			<a class="topTabLink" href="https://github.com/PMMG-Products/pmmg-products.github.io">GitHub</a>
+			<div class="toggleIndicator toggleIndicatorActive"></div>
+		</div>
+	</div>
+	<div>
+		<div class="topTab" id="permalinkButton">
+			<a class="topTabLink">Get Permalink</a>
+			<div class="toggleIndicator toggleIndicatorActive"></div>
+		</div>
+		<div class="permalinkContainer" id="permalinkContainer" style="display: none">
+				<div class="permalinkCaret"></div>
+				<div class="permalinkInner">
+					<div style="margin-bottom: 8px">
+						<input class="permalink" id="permalink"></input>
+						<button id="permalinkCopyButton">🔗</button>
+					</div>
+					<div style="margin-bottom: 6px">
+						<input class="permalink" id="permalink-rprun"></input>
+						<button id="permalinkCopyButton-rprun">🔗</button>
+					</div>
+					<div>
+						<input type="checkbox" id="hideOptions"></input>
+						<div>Hide Options?</div>
+					</div>
+					<div>
+						<input type="checkbox" id="latestMonth" checked=true></input>
+						<div>Show Latest Month?</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>
+
+<div class="mainContainer">
+	<div class="plotSelectorContainer" id="graphTypeContainer">
+		<label>
+			Graph: 
+			<select class="plotSelector" id="graphType">	
+			</select>
+		</label>
+	</div>
+	<div class="selectorSubtypes" id="selectorSubtypes">
+
+	</div>
+	<div class="mainPlot" id="mainPlotContainer">
+		<div id="mainPlot"></div>
+	</div>
+</div>
+
+</body>
+</html>
