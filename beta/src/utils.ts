@@ -21,6 +21,8 @@ export async function query(sqlQuery: string)
 			serverMode: "full",
 			url: "./data/prun-data.db",
 			requestChunkSize: 4096,
+			// @ts-ignore
+			fileLength: 26374144
 			},
 		},
 		],
