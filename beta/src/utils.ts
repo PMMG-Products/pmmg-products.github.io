@@ -19,7 +19,7 @@ export async function query(sqlQuery: string)
 			from: "inline",
 			config: {
 			serverMode: "full",
-			url: "./data/prun-data.db",
+			url: "./data/prun-data.sqlite",
 			requestChunkSize: 4096,
 			// @ts-ignore
 			fileLength: 26374144
