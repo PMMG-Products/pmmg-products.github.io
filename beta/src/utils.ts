@@ -1,39 +1,32 @@
 import { fullMonthNames, materialCategories, materialCategoryColors } from "./staticData/constants";
-import { createDbWorker } from "sql.js-httpvfs";
+import initSqlJs from "sql.js";
 
 // Get data from SQL database
-var sqlWorker = undefined as any;
+var SQL: any;
+var db: any;
 export async function query(sqlQuery: string)
 {
-	if(!sqlWorker)
+	if(!SQL)
 	{
-		const workerUrl = new URL(
-			"sql.js-httpvfs/dist/sqlite.worker.js",
-			import.meta.url
-		);
-		const wasmUrl = new URL("sql.js-httpvfs/dist/sql-wasm.wasm", import.meta.url);
+		SQL = await initSqlJs({
+			locateFile: () =>
+				"./sql-wasm.wasm"
+		});
+		
+		const buffer = await fetch("./data/prun-data.sqlite").then(r => r.arrayBuffer());
 
-		sqlWorker = await createDbWorker(
-		[
-		{
-			from: "inline",
-			config: {
-			serverMode: "full",
-			url: "./data/prun-data.sqlite",
-			requestChunkSize: 4096,
-			// @ts-ignore
-			fileLength: 26374144
-			},
-		},
-		],
-		workerUrl.toString(),
-		wasmUrl.toString()
-		);
+		db = new SQL.Database(new Uint8Array(buffer));
+		
 	}
 
-    const result = await sqlWorker.db.query(sqlQuery);
+    const result = db.exec(sqlQuery);
+	if (!result || result.length === 0) return [];
 
-    return result
+	const { columns, values } = result[0];
+
+	return values.map((row: any[]) =>
+		Object.fromEntries(row.map((val, i) => [columns[i], val]))
+	);
 }
 
 // Sort an array by the key of each object month

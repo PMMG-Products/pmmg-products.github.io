@@ -16,6 +16,6 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "sql.js-httpvfs": "^0.8.12"
+    "sql.js": "^1.13.0"
   }
 }

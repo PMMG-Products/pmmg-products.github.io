@@ -39,6 +39,7 @@ export class TopProduction implements Graph {
         // Get Data
         const prodData = await query("SELECT ticker, " + queryFields + " FROM ProdInfo WHERE month = '" + configValues.month + "'") as any[]
         
+        
         // Process Data
         if(configValues.metric == 'deficit')	// Populate deficit into data
 		{
