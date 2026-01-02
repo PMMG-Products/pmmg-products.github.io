@@ -1,6 +1,6 @@
 import { createGraph, switchPlot } from "../core";
 import { materialCategoryColors, months, monthsPretty, prettyModeNames } from "../staticData/constants";
-import { addConfigField, clearChildren, getCompanyId, getData, getMatCategory, getMatColor, prettyMonthName } from "../utils";
+import { addConfigField, clearChildren, getCompanyId, getData, getMatCategory, getMatColor, prettyMonthName, query } from "../utils";
 import { Graph } from "./graph";
 
 export class CompanyTotals implements Graph {
@@ -36,28 +36,21 @@ export class CompanyTotals implements Graph {
     async generatePlot(configValues: any, plotContainerID: string)
     {
         if(!configValues.companyName || configValues.companyName == ""){return;}
-        // Get Company Data
-        const companyData = await getData(this.loadedData, "company", configValues.month);
-        const knownCompanies = await getData(this.loadedData, "knownCompanies");
-
-        // Get Company ID
-        var companyID = await getCompanyId(configValues.companyName, this.loadedData) as string;
-        if(!companyID){ return; }
-        var companyName = knownCompanies[companyID];
-
-        if(!companyData.individual[companyID]){return;}
+        
+        const companyData = await query("SELECT icp.ticker, icp." + configValues.metric + " FROM IndivCompanyProd icp LEFT JOIN CompanyInfo ci on ci.id = icp.id WHERE ci.usernamelower = '" + (configValues.companyName).toLowerCase() + "' AND icp.month = '" + configValues.month + "'")
+        
         // Parse Data
         var catData = [] as number[]; // Y-axis of chart
         var categories = [] as any[];  // X-axis of chart
         var totalValue = 0; // Total of metric
-        Object.keys(companyData.individual[companyID]).forEach((ticker: string) => {
-            const metric = companyData.individual[companyID][ticker][configValues.metric];
+        companyData.forEach((data: any) => {
+            const metric = data[configValues.metric];
             if(metric < 0 && (configValues.chartType == "treemap" || configValues.chartType == "treemap-categories")){return;}
             totalValue += metric;
 
             if(configValues.chartType == "treemap-categories")
             {
-                const category = getMatCategory(ticker);
+                const category = getMatCategory(data.ticker);
                 
                 const catIndex = categories.indexOf(category);
                 if(catIndex == -1)
@@ -73,10 +66,9 @@ export class CompanyTotals implements Graph {
             else
             {
                 catData.push(metric);
-                categories.push(ticker);
+                categories.push(data.ticker);
             }
         });
-
         // Sort data from largest to smallest categories
         const indices = Array.from(categories.keys());
         indices.sort((a, b) => catData[b] - catData[a]);
@@ -138,7 +130,7 @@ export class CompanyTotals implements Graph {
                     t: 40,  // top
                     b: 10   // bottom
                 }} : {}),
-                title: {text: titles[configValues.metric] + companyName + ' - ' + prettyMonthName(configValues.month)}
+                title: {text: titles[configValues.metric] + configValues.companyName + ' - ' + prettyMonthName(configValues.month)}
             }, {})
         }
         else if(configValues.chartType == "bar")
@@ -155,7 +147,7 @@ export class CompanyTotals implements Graph {
                         t: 40,  // top
                         b: 60   // bottom
                     }} : {}),
-                    title: {text: titles[configValues.metric] + companyName + ' - ' + prettyMonthName(configValues.month)},
+                    title: {text: titles[configValues.metric] + configValues.companyName + ' - ' + prettyMonthName(configValues.month)},
                     xaxis: {
                         title: {text: 'Ticker'},
                         range: [-0.5, Math.min(categories.length, 30) - 0.5]
@@ -180,7 +172,7 @@ export class CompanyTotals implements Graph {
                         t: 40,  // top
                         b: 10   // bottom
                     }} : {}),
-                    title: {text: titles[configValues.metric] + companyName + ' - ' + prettyMonthName(configValues.month)},
+                    title: {text: titles[configValues.metric] + configValues.companyName + ' - ' + prettyMonthName(configValues.month)},
                     xaxis: {
                         title: {text: 'Ticker'},
                         range: [-0.5, Math.min(categories.length, 30) - 0.5]

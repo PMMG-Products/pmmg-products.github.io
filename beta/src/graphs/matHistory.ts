@@ -1,6 +1,6 @@
 import { createGraph, switchPlot } from "../core";
-import { months, monthsPretty } from "../staticData/constants";
-import { addConfigField, clearChildren, getData, prettyMonthName } from "../utils";
+import { monthsPrettyMap } from "../staticData/constants";
+import { addConfigField, clearChildren, monthSort, query } from "../utils";
 import { Graph } from "./graph";
 
 export class MatHistory implements Graph {
@@ -34,45 +34,26 @@ export class MatHistory implements Graph {
     async generatePlot(configValues: any, plotContainerID: string)
     {
         if(!configValues.ticker || configValues.ticker == ""){return;}
+        const ticker = configValues.ticker ? (configValues.ticker).toUpperCase() : undefined
 
         // Get Data
-        const totalTickerData = [];
-        for(var i = 0; i < months.length; i++)
+        var prodData: any[]
+        switch(configValues.metric)
         {
-            const monthData = await getData(this.loadedData, "prod", months[i]);
-            totalTickerData.push(monthData[(configValues.ticker ?? "").toUpperCase()])
-        }
+            case 'price':
+                prodData = await query("SELECT CASE WHEN amount = 0 THEN 0 ELSE volume/amount END price, month FROM ProdInfo WHERE ticker = '" + ticker + "'")
+                break;
+            case 'surplus':
+                prodData = await query("SELECT amount - consumed surplus, month FROM ProdInfo WHERE ticker = '" + ticker + "'")
+                break;
+            default:
+                prodData = await query("SELECT " + configValues.metric + ", month FROM ProdInfo WHERE ticker = '" + ticker + "'")
         
-        const tickerData = [] as number[];  // Data for the specific metric
-        const validMonths = [] as string[]; // Months with data
-        totalTickerData.forEach((data, i) => {
-            if(!data){return;}
-            validMonths.push(monthsPretty[i]);
-
-            switch(configValues.metric)
-            {
-                case "volume":
-                    tickerData.push(data.volume);
-                    break;
-                case "profit":
-                    tickerData.push(data.profit);
-                    break;
-                case "price":
-                    tickerData.push(data.amount == 0 ? 0 : data.volume / data.amount);
-                    break;
-                case "amount":
-                    tickerData.push(data.amount);
-                    break;
-                case "consumed":
-                    tickerData.push(data.consumed);
-                    break;
-                case "surplus":
-                    tickerData.push(data.amount - data.consumed);
-                    break;
-            }
-        });
-
-        if(validMonths.length == 0){return;}
+        }
+        prodData.sort(monthSort)
+        
+        const months = prodData.map(item => monthsPrettyMap[item.month]);
+        const prodArray = prodData.map(item => item[configValues.metric])
 
         const titles = {
             'profit': 'Production Profit History of ',
@@ -92,7 +73,7 @@ export class MatHistory implements Graph {
         } as any
 
         // Create graph
-        createGraph(plotContainerID, [{x: validMonths, y: tickerData, type: 'bar'}], 
+        createGraph(plotContainerID, [{x: months, y: prodArray, type: 'bar'}], 
             {
                 width: this.urlParams.hideOptions !== undefined ? undefined : 800,
                 height: this.urlParams.hideOptions !== undefined ? undefined : 400,

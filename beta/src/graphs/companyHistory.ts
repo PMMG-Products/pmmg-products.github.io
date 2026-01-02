@@ -39,11 +39,11 @@ export class CompanyHistory implements Graph {
         var companyData: any[];
         if(configValues.metric == 'bases')
         {
-            companyData = await query("SELECT ci.username, bi.bases, bi.month FROM BaseInfo bi LEFT JOIN CompanyInfo ci ON ci.id = bi.id WHERE LOWER(ci.username) = LOWER('" + configValues.companyName + "')")
+            companyData = await query("SELECT ci.username, bi.bases, bi.month FROM BaseInfo bi LEFT JOIN CompanyInfo ci ON ci.id = bi.id WHERE ci.usernamelower = '" + (configValues.companyName).toLowerCase() + "'")
         }
         else
         {
-            companyData = await query("SELECT ci.username, tcd." + configValues.metric + ", tcd.month FROM TotalCompanyProd tcd LEFT JOIN CompanyInfo ci on ci.id = tcd.id WHERE LOWER(ci.username) = LOWER('" + configValues.companyName + "')")
+            companyData = await query("SELECT ci.username, tcd." + configValues.metric + ", tcd.month FROM TotalCompanyProd tcd LEFT JOIN CompanyInfo ci on ci.id = tcd.id WHERE ci.usernamelower = '" + (configValues.companyName).toLowerCase() + "'")
         }
         companyData.sort(monthSort)
 

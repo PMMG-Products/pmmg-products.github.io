@@ -6,6 +6,7 @@ var SQL: any;
 var db: any;
 export async function query(sqlQuery: string)
 {
+	console.log(sqlQuery)
 	if(!SQL)
 	{
 		SQL = await initSqlJs({
@@ -13,20 +14,23 @@ export async function query(sqlQuery: string)
 				"./sql-wasm.wasm"
 		});
 		
-		const buffer = await fetch("./data/prun-data.sqlite").then(r => r.arrayBuffer());
+		const buffer = await fetch(`./data/prun-data.sqlite?ts=${Date.now()}`).then(r => r.arrayBuffer());
 
 		db = new SQL.Database(new Uint8Array(buffer));
 		
 	}
 
-    const result = db.exec(sqlQuery);
+    console.time("exec");
+	const result = db.exec(sqlQuery);
+	console.timeEnd("exec");
 	if (!result || result.length === 0) return [];
 
 	const { columns, values } = result[0];
 
-	return values.map((row: any[]) =>
+	const x = values.map((row: any[]) =>
 		Object.fromEntries(row.map((val, i) => [columns[i], val]))
 	);
+	return x
 }
 
 // Sort an array by the key of each object month

@@ -1,6 +1,6 @@
 import { createGraph, switchPlot } from "../core";
 import { months, monthsPretty } from "../staticData/constants";
-import { addConfigField, clearChildren, getData, prettyMonthName } from "../utils";
+import { addConfigField, clearChildren, getData, prettyMonthName, query } from "../utils";
 import { Graph } from "./graph";
 
 export class MarketOverview implements Graph {
@@ -36,9 +36,7 @@ export class MarketOverview implements Graph {
         if (!ticker) {
             return;
         }
-
-        const companyData = await getData(this.loadedData, "company", configValues.month);
-        const knownCompanies = await getData(this.loadedData, "knownCompanies");
+        const companyData = await query("SELECT COALESCE(ci.username, CONCAT(SUBSTR(icp.id, 1, 5), '...')) username, icp.volume, icp.profit, icp.amount FROM IndivCompanyProd icp LEFT JOIN CompanyInfo ci on ci.id = icp.id WHERE icp.ticker = '" + ticker + "' AND icp.month = '" + configValues.month + "'")
 
         const labels = [] as string[];
         const parents = [] as string[];
@@ -46,18 +44,13 @@ export class MarketOverview implements Graph {
         let totalAmount = 0;
         let totalVolume = 0;
         let totalProfit = 0;
-        for (const key of Object.keys(companyData.individual)) {
-            const individualData = companyData.individual[key];
-            const tickerData = individualData[ticker];
-            if (!tickerData) {
-                continue;
-            }
-            labels.push(knownCompanies[key] ?? (key.substring(0, 5) + "..."));
+        for (const company of companyData) {
+            labels.push(company.username);
             parents.push("Total");
-            values.push(tickerData.amount);
-            totalVolume += tickerData.volume;
-            totalProfit += tickerData.profit;
-            totalAmount += tickerData.amount;
+            values.push(company.amount);
+            totalVolume += company.volume;
+            totalProfit += company.profit;
+            totalAmount += company.amount;
         }
 
         if (labels.length === 0) {
@@ -74,7 +67,7 @@ export class MarketOverview implements Graph {
             + `Produced per day: ${Math.round(totalAmount).toLocaleString()} ${ticker}`
             + "<br>"
             + `Volume: ${formatMoney(totalVolume)} | Profit: ${formatMoney(totalProfit)}`;
-
+            
         // Create graph
         createGraph(plotContainerID, [{
                 labels: labels,
