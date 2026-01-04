@@ -1,12 +1,12 @@
 import { createGraph, switchPlot } from "../core";
 import { months, monthsPretty } from "../staticData/constants";
-import { addConfigField, clearChildren, getCompanyId, getData } from "../utils";
+import { addConfigField, clearChildren, getCompanyId, getData, updateUsernameLabel } from "../utils";
 import { Graph } from "./graph";
 
 export class CompanyHistory implements Graph {
     id = "compHistory";
     displayName = "Company History";
-    configFieldIDs = ["metric", "companyName"];
+    configFieldIDs = ["metric", "group", "companyName"];
     loadedData: any;
     urlParams: any;
 
@@ -27,6 +27,7 @@ export class CompanyHistory implements Graph {
         }
 
         configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases"], values: ["volume", "profit", "bases"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
+        configDiv?.appendChild(addConfigField("select", "group", "Group: ", {prettyValues: ["By Company", "By Corporation"], values: ["company", "corp"]}, useURLParams ? this.urlParams.group : undefined, updateUsernameLabel));
         configDiv?.appendChild(addConfigField("input", "companyName", "Username: ", undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, "-27px"));
         
     }
@@ -37,18 +38,52 @@ export class CompanyHistory implements Graph {
 
         // Get Company Data
         const knownCompanies = await getData(this.loadedData, "knownCompanies");
+        var companyName: string;
+        var companyID; 
 
-        // Get Company ID
-        var companyID = await getCompanyId(configValues.companyName, this.loadedData) as string;
-        if(!companyID){ return; }
-        var companyName = knownCompanies[companyID];
+        if(configValues.group == 'company')
+        {
+            companyID = await getCompanyId(configValues.companyName, this.loadedData) as string;
+            if(!companyID){ return; }
+            companyName = knownCompanies[companyID]?.Username;
+        }
+        else
+        {
+            companyName = configValues.companyName.toUpperCase()
+        }
 
         // Get Data
         const fullCompanyData = [] as any[];    // Company data across the months
         for(var i = 0; i < months.length; i++)
         {
             const monthData = await getData(this.loadedData, configValues.metric == "bases" ? "base" : "company", months[i]);
-            fullCompanyData.push(configValues.metric == "bases" ? monthData[companyID] : monthData.totals[companyID]);
+            const dataset = configValues.metric == "bases" ? monthData : monthData.totals;
+            if(configValues.group == 'company')
+            {
+                fullCompanyData.push(dataset[companyID || '']);
+            }
+            else
+            {
+                const corpData = {} as any;
+                var hasData = false;
+                const parentCorps = await getData(this.loadedData, 'parentCorps');
+                
+                Object.keys(dataset).forEach(id => {
+                    const companyObj = knownCompanies[id]
+                    if(companyObj && (companyObj.Corporation == companyName || parentCorps[companyObj.Corporation] == companyName))
+                    {
+                        hasData = true
+                        Object.keys(dataset[id]).forEach(metric => {
+                            if(!corpData[metric]){ corpData[metric] = 0; }
+                            corpData[metric] += dataset[id][metric]
+                        });
+                    }
+                });
+                if(hasData)
+                {
+                    fullCompanyData.push(corpData)
+                }
+            }
         }
         
         const validMonths = [] as string[]; // Months with data

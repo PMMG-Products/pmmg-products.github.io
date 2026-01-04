@@ -25,6 +25,7 @@ export function addConfigField(inputType: string, id: string, label: string, val
 {
 	const labelElem = document.createElement('label');
 	labelElem.textContent = label;
+	labelElem.id = id + '-label'
 	
 	const inputElem = document.createElement(inputType);
 	inputElem.id = id;
@@ -126,6 +127,12 @@ export async function getData(loadedData: any, dataType: string, month?: string)
 				loadedData['universe-data'] = await fetch('data/universe-data.json?cb=' + Date.now()).then(response => response.json());
 			}
 			return loadedData['universe-data']
+		case "parentCorps":
+			if(!loadedData['parent-corps']) 
+			{ 
+				loadedData['parent-corps'] = await fetch('data/parentCorps.json?cb=' + Date.now()).then(response => response.json());
+			}
+			return loadedData['parent-corps']
 	}
 }
 
@@ -143,7 +150,8 @@ export async function getCompanyId(companyName: string, loadedData: any) {
 	const knownCompanies = await getData(loadedData, "knownCompanies") as any;
 
 	// Pull from known companies
-	var companyID = Object.keys(knownCompanies).find(id => (knownCompanies[id] ?? "").toLowerCase() == companyName.toLowerCase()) as string;
+	// @ts-ignore
+	var companyID = Object.entries(knownCompanies).find(([, v]) => v?.Username?.toLowerCase() === companyName.toLowerCase())?.[0] as any;
 	if(companyID) { return companyID; }
 
 	// Resort to FIO
@@ -156,4 +164,24 @@ export async function getCompanyId(companyName: string, loadedData: any) {
 	knownCompanies[companyID] = companyName;
 
 	return companyID as string | undefined;
+}
+
+// Update the username label (companyName-label ID) to say "Corp Code" or "Username" depending on group selection
+export function updateUsernameLabel()
+{
+    const usernameLabel = document.getElementById('companyName-label')
+    const groupElem = document.getElementById('group') as HTMLInputElement
+    
+
+    if(usernameLabel && usernameLabel.firstChild)
+    {
+        if(groupElem && groupElem.value && groupElem.value != 'company')
+        {
+            usernameLabel.firstChild.nodeValue = 'Corp Code: ';
+        }
+        else
+        {
+            usernameLabel.firstChild.nodeValue = 'Username: ';
+        }
+    }
 }

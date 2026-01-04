@@ -1,12 +1,13 @@
 import { createGraph, switchPlot } from "../core";
-import { materialCategoryColors, months, monthsPretty, prettyModeNames } from "../staticData/constants";
-import { addConfigField, clearChildren, getCompanyId, getData, getMatCategory, getMatColor, prettyMonthName, updateUsernameLabel } from "../utils";
+import { months, monthsPretty, prettyModeNames } from "../staticData/constants";
+import { addConfigField, clearChildren, getData, prettyMonthName } from "../utils";
 import { Graph } from "./graph";
 
-export class CompanyTotals implements Graph {
-    id = "compTotals";
-    displayName = "Company Totals";
-    configFieldIDs = ["chartType", "metric", "group", "month", "companyName"];
+export class CorporationBreakdown implements Graph {
+    id = "corpBreakdown";
+    displayName = "Corp Breakdown";
+
+    configFieldIDs = ["chartType", "metric", "month", "companyName"];
     loadedData: any;
     urlParams: any;
 
@@ -26,13 +27,10 @@ export class CompanyTotals implements Graph {
             clearChildren(configDiv);
         }
 
-        const usernameLabel = useURLParams && this.urlParams.group && this.urlParams.group != 'company' ? 'Corp Code: ' : 'Username: ';
-
-        configDiv?.appendChild(addConfigField("select", "chartType", "Chart Type: ", {prettyValues: ["Bar", "Pie", "Treemap (Mat)", "Treemap (Cat)"], values: ["bar", "pie", "treemap", "treemap-categories"]}, useURLParams ? this.urlParams.chartType : "treemap", updateFunc, "-30px"));
-        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit"], values: ["volume", "profit"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
-        configDiv?.appendChild(addConfigField("select", "group", "Group: ", {prettyValues: ["By Company", "By Corporation"], values: ["company", "corp"]}, useURLParams ? this.urlParams.group : undefined, updateUsernameLabel));
+        configDiv?.appendChild(addConfigField("select", "chartType", "Chart Type: ", {prettyValues: ["Bar", "Pie", "Treemap"], values: ["bar", "pie", "treemap"]}, useURLParams ? this.urlParams.chartType : "treemap", updateFunc, "-30px"));
+        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases"], values: ["volume", "profit", "bases"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
         configDiv?.appendChild(addConfigField("select", "month", "Month: ", {prettyValues: monthsPretty, "values": months}, useURLParams && this.urlParams.month ? this.urlParams.month : months[months.length - 1], updateFunc));
-        configDiv?.appendChild(addConfigField("input", "companyName", usernameLabel, undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, "-27px"));
+        configDiv?.appendChild(addConfigField("input", "companyName", "Corp Code: ", undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, "-29px"));
         
     }
 
@@ -40,77 +38,42 @@ export class CompanyTotals implements Graph {
     {
         if(!configValues.companyName || configValues.companyName == ""){return;}
         // Get Company Data
-        const companyData = await getData(this.loadedData, "company", configValues.month);
+        const companyData = await getData(this.loadedData, configValues.metric == "bases" ? "base" : "company", configValues.month);
+        const dataset = configValues.metric == "bases" ? companyData : companyData.totals;
+
         const knownCompanies = await getData(this.loadedData, "knownCompanies");
 
         var companyName: string;
-        var prodData: any;
 
-        if(configValues.group == 'company')
-        {
-            // Get Company ID
-            var companyID = await getCompanyId(configValues.companyName, this.loadedData) as string;
-            if(!companyID){ return; }
-            companyName = knownCompanies[companyID]?.Username;
-            if(!companyData.individual[companyID]){return;}
-            prodData = companyData.individual[companyID];
-        }
-        else
-        {
-            const parentCorps = await getData(this.loadedData, 'parentCorps');
-            companyName = configValues.companyName.toUpperCase();
-            prodData = {}
-            
-            Object.keys(companyData.individual).forEach(id => {
-                const companyObj = knownCompanies[id]
-                if(companyObj && (companyObj.Corporation == companyName || parentCorps[companyObj.Corporation] == companyName))
-                {
-                    const indivCompanyData = companyData.individual[id]
-                    Object.keys(indivCompanyData).forEach(ticker => {
-                        if(!prodData[ticker])
-                        {
-                            prodData[ticker] = {volume: 0, profit: 0, amount: 0, rank: 0}
-                        }
-                        Object.keys(indivCompanyData[ticker]).forEach(metric => {
-                            prodData[ticker][metric] += indivCompanyData[ticker][metric]
-                        });
-                    });
-                }
-            });
+        const parentCorps = await getData(this.loadedData, 'parentCorps');
+        companyName = configValues.companyName.toUpperCase();
+        const corpData = {} as any;
+        
+        Object.keys(dataset).forEach(id => {
+            const companyObj = knownCompanies[id]
+            if(companyObj && (companyObj.Corporation == companyName || parentCorps[companyObj.Corporation] == companyName))
+            {
+                const indivCompanyData = dataset[id];
+                const name = companyObj['Username'];
+                corpData[name] = indivCompanyData;
+            }
+        });
 
-            if(Object.keys(prodData).length == 0){return;}
-        }
+        if(Object.keys(corpData).length == 0){return;}
 
         // Parse Data
         var catData = [] as number[]; // Y-axis of chart
         var categories = [] as any[];  // X-axis of chart
         var totalValue = 0; // Total of metric
         
-        Object.keys(prodData).forEach((ticker: string) => {
-            const metric = prodData[ticker][configValues.metric];
-            if(metric < 0 && (configValues.chartType == "treemap" || configValues.chartType == "treemap-categories")){return;}
+        Object.keys(corpData).forEach((name: string) => {
+            const metric = corpData[name][configValues.metric];
+            if(metric < 0 && (configValues.chartType == "treemap")){return;}
             totalValue += metric;
 
-            if(configValues.chartType == "treemap-categories")
-            {
-                const category = getMatCategory(ticker);
-                
-                const catIndex = categories.indexOf(category);
-                if(catIndex == -1)
-                {
-                    categories.push(category);
-                    catData.push(metric);
-                }
-                else
-                {
-                    catData[catIndex] += metric;
-                }
-            }
-            else
-            {
-                catData.push(metric);
-                categories.push(ticker);
-            }
+            catData.push(metric);
+            categories.push(name);
+
         });
 
         // Sort data from largest to smallest categories
@@ -123,30 +86,16 @@ export class CompanyTotals implements Graph {
         const titles = {
 		    'profit': 'Production Profit Breakdown of ',
 		    'volume': 'Production Volume Breakdown of ',
+            'bases': 'Base Breakdown of '
 	    } as any;
 
-        if(configValues.chartType == "treemap" || configValues.chartType == "treemap-categories")
+        if(configValues.chartType == "treemap")
         {
-            // Get Colors
-            const colors = [] as string[];
-            if(configValues.chartType == "treemap")
-            {
-                categories.forEach(cat => {
-                    colors.push(getMatColor(cat));
-                }); 
-            }
-            else
-            {
-                categories.forEach(cat => {
-                    colors.push(materialCategoryColors[cat] ?? "#000000");
-                });
-            }
             
             const parents = categories.map(m => "Total");
             categories.push("Total");
             catData.push(totalValue);
             parents.push('');
-            colors.push('#252525');
 
             // Make graph
             createGraph(plotContainerID, [{
@@ -156,9 +105,6 @@ export class CompanyTotals implements Graph {
                 type: 'treemap', 
                 maxdepth: 2, 
                 branchvalues: 'total',
-                marker: {
-                    colors: colors
-                },
                 tiling: {
                     pad: 0,
                 },

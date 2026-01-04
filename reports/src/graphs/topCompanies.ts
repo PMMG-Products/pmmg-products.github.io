@@ -6,7 +6,7 @@ import { Graph } from "./graph";
 export class TopCompanies implements Graph {
     id = "topCompanies";
     displayName = "Top Companies";
-    configFieldIDs = ["metric", "month"];
+    configFieldIDs = ["metric", "group", "month"];
     loadedData: any;
     urlParams: any;
 
@@ -27,6 +27,7 @@ export class TopCompanies implements Graph {
         }
 
         configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases"], values: ["volume", "profit", "bases"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
+        configDiv?.appendChild(addConfigField("select", "group", "Group: ", {prettyValues: ["By Company", "By Corporation"], values: ["company", "corp"]}, useURLParams ? this.urlParams.group : undefined, updateFunc));
         configDiv?.appendChild(addConfigField("select", "month", "Month: ", {prettyValues: monthsPretty, "values": months}, useURLParams && this.urlParams.month ? this.urlParams.month : months[months.length - 1], updateFunc));
         
     }
@@ -36,24 +37,71 @@ export class TopCompanies implements Graph {
         // Get Data
         const companyData = await getData(this.loadedData, configValues.metric == "bases" ? "base" : "company", configValues.month);
         const knownCompanies = await getData(this.loadedData, "knownCompanies");
-        
-        // Convert the data object into an array of [companyID, volume] pairs
-        const volumeArray = Object.entries(configValues.metric == "bases" ? companyData : companyData.totals).map(([companyID, info]) => ({
-            companyID,
-            volume: (info as any)[configValues.metric]
-        }));
+        const dataset = configValues.metric == "bases" ? companyData : companyData.totals;
 
-        // Sort the array by volume in descending order
-        volumeArray.sort((a, b) => b.volume - a.volume);
+        var companyNames;
+        var volumes;
 
-        // Extract tickers and volumes into separate arrays
-        const companyIDs = volumeArray.map(item => item.companyID);
-        const volumes = volumeArray.map(item => item.volume);
+        // Agglomerate corporations
+        if(configValues.group == 'corp')
+        {
+            const parentCorps = await getData(this.loadedData, 'parentCorps');
+            const corpData = {} as any
+            Object.keys(dataset).forEach(id => {
+                const companyObj = knownCompanies[id]
+                if(companyObj && companyObj['Corporation'])
+                {
+                    var corp = companyObj['Corporation'] as string
+                    if(parentCorps[corp]){ corp = parentCorps[corp]; }
+                    
+                    if(corpData[corp])
+                    {
+                        corpData[corp] += dataset[id][configValues.metric]
+                    }
+                    else
+                    {
+                        corpData[corp] = dataset[id][configValues.metric]
+                    }
+                }
+            });
 
-        const companyNames = [] as any[];
-        companyIDs.forEach(id => {
-            companyNames.push(knownCompanies[id] || (id.slice(0, 5) + "..."));
-        });
+            // Convert the data object into an array of [corpCode, volume] pairs
+            const volumeArray = Object.entries(corpData).map(([corpCode, info]) => ({
+                corpCode,
+                volume: info as any
+            }));
+
+            // Sort the array by volume in descending order
+            volumeArray.sort((a, b) => b.volume - a.volume);
+
+            // Extract tickers and volumes into separate arrays
+            companyNames = volumeArray.map(item => item.corpCode);
+            volumes = volumeArray.map(item => item.volume);
+        }
+        else
+        {
+            // Convert the data object into an array of [companyID, volume] pairs
+            const volumeArray = Object.entries(dataset).map(([companyID, info]) => ({
+                companyID,
+                volume: (info as any)[configValues.metric]
+            }));
+
+            // Sort the array by volume in descending order
+            volumeArray.sort((a, b) => b.volume - a.volume);
+
+            // Extract tickers and volumes into separate arrays
+            const companyIDs = volumeArray.map(item => item.companyID);
+            volumes = volumeArray.map(item => item.volume);
+
+            companyNames = [] as any[];
+            companyIDs.forEach(id => {
+                const companyObj = knownCompanies[id]
+                companyNames.push(companyObj ? companyObj['Username'] : (id.slice(0, 5) + "..."));
+            });
+        }
+
+        // Pretty names for group
+        const prettyGroupNames = {'company': 'Companies', 'corp': 'Corporations'} as any
 
         // Create graph
         createGraph(plotContainerID, [{x: companyNames, y: volumes, type: 'bar'}], 
@@ -67,7 +115,7 @@ export class TopCompanies implements Graph {
                     t: 40,  // top
                     b: 100   // bottom
                 }} : {}),
-                title: {text: 'Top Companies (' + prettyModeNames[configValues.metric] + ') - ' + prettyMonthName(configValues.month)},
+                title: {text: 'Top ' + prettyGroupNames[configValues.group] + ' (' + prettyModeNames[configValues.metric] + ') - ' + prettyMonthName(configValues.month)},
                 xaxis: {
                     title: {text: 'Ticker'},
                     range: [-0.5, 29.5]

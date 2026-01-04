@@ -10,6 +10,7 @@ import { UniverseHistory } from "./graphs/universeHistory";
 import { MarketOverview } from "./graphs/marketOverview";
 import { addPermalink } from "./permalink";
 import { addOption } from "./utils";
+import { CorporationBreakdown } from "./graphs/corpBreakdown";
 
 window.onload = function() {
 	// Do permalink stuff
@@ -63,5 +64,6 @@ export const graphs: Graph[] = [
     new MarketOverview(loadedData, urlParams),
 	new CompanyTotals(loadedData, urlParams),
 	new CompanyHistory(loadedData, urlParams),
-	new CompanyRank(loadedData, urlParams)
+	new CompanyRank(loadedData, urlParams),
+	new CorporationBreakdown(loadedData, urlParams)
 ];

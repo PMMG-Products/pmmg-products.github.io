@@ -52,7 +52,8 @@ export class MarketOverview implements Graph {
             if (!tickerData) {
                 continue;
             }
-            labels.push(knownCompanies[key] ?? (key.substring(0, 5) + "..."));
+            const companyObj = knownCompanies[key]
+            labels.push(companyObj ? companyObj['Username'] : (key.slice(0, 5) + "..."));
             parents.push("Total");
             values.push(tickerData.amount);
             totalVolume += tickerData.volume;
