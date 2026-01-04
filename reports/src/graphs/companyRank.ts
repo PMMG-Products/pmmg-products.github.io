@@ -40,6 +40,7 @@ export class CompanyRank implements Graph {
 
         // Get Company ID
         var companyID = await getCompanyId(configValues.companyName, this.loadedData) as string;
+        
         if(!companyID){ return; }
         var companyName = knownCompanies[companyID];
 
@@ -49,7 +50,7 @@ export class CompanyRank implements Graph {
         
         const companyData = fullCompanyData.individual[companyID];  // Company data for this company for this month
         const prevCompanyData = fullPrevCompanyData.individual[companyID];  // Company data for this company for last month. May be undefined.
-
+        
         if(!companyData){return;}
 
         var tableData = [] as any[];   // Entries in the table in raw data form
