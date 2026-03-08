@@ -28,7 +28,7 @@ export class CorporationBreakdown implements Graph {
         }
 
         configDiv?.appendChild(addConfigField("select", "chartType", "Chart Type: ", {prettyValues: ["Bar", "Pie", "Treemap"], values: ["bar", "pie", "treemap"]}, useURLParams ? this.urlParams.chartType : "treemap", updateFunc, "-30px"));
-        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases"], values: ["volume", "profit", "bases"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
+        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases", "Ships"], values: ["volume", "profit", "bases", "ships"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
         configDiv?.appendChild(addConfigField("select", "month", "Month: ", {prettyValues: monthsPretty, "values": months}, useURLParams && this.urlParams.month ? this.urlParams.month : months[months.length - 1], updateFunc));
         configDiv?.appendChild(addConfigField("input", "companyName", "Corp Code: ", undefined, useURLParams ? this.urlParams.companyName : undefined, updateFunc, "-29px"));
         
@@ -37,9 +37,21 @@ export class CorporationBreakdown implements Graph {
     async generatePlot(configValues: any, plotContainerID: string)
     {
         if(!configValues.companyName || configValues.companyName == ""){return;}
+        var fileName;
+        switch(configValues.metric)
+        {
+            case "bases":
+                fileName = "base"
+                break;
+            case "ships":
+                fileName = "ship"
+                break;
+            default:
+                fileName = "company"
+        }
         // Get Company Data
-        const companyData = await getData(this.loadedData, configValues.metric == "bases" ? "base" : "company", configValues.month);
-        const dataset = configValues.metric == "bases" ? companyData : companyData.totals;
+        const companyData = await getData(this.loadedData, fileName, configValues.month);
+        const dataset = configValues.metric == "bases" || configValues.metric == "ships" ? companyData : companyData.totals;
 
         const knownCompanies = await getData(this.loadedData, "knownCompanies");
 
@@ -48,6 +60,13 @@ export class CorporationBreakdown implements Graph {
         const parentCorps = await getData(this.loadedData, 'parentCorps');
         companyName = configValues.companyName.toUpperCase();
         const corpData = {} as any;
+
+        // Return if company data not defined for that month
+        if(!companyData)
+        {
+            console.error("Data type not defined for this month.")
+            return;
+        }
         
         Object.keys(dataset).forEach(id => {
             const companyObj = knownCompanies[id]
@@ -86,8 +105,15 @@ export class CorporationBreakdown implements Graph {
         const titles = {
 		    'profit': 'Production Profit Breakdown of ',
 		    'volume': 'Production Volume Breakdown of ',
-            'bases': 'Base Breakdown of '
+            'bases': 'Base Breakdown of ',
+            'ships': 'Ship Breakdown of '
 	    } as any;
+        const hoverTemplates = {
+            'profit': '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>',
+            'volume': '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>',
+            'bases': '%{label}<br>%{value:,.3~s}<br>%{percentEntry:.2%}<extra></extra>',
+            'ships': '%{label}<br>%{value:,.3~s}<br>%{percentEntry:.2%}<extra></extra>'
+        } as any;
 
         if(configValues.chartType == "treemap")
         {
@@ -109,7 +135,7 @@ export class CorporationBreakdown implements Graph {
                     pad: 0,
                 },
                 textposition: 'middle center',
-                hovertemplate: '%{label}<br>$%{value:,.3~s}/day<br>%{percentEntry:.2%}<extra></extra>'}],
+                hovertemplate: hoverTemplates[configValues.metric]}],
             {
                 width: this.urlParams.hideOptions !== undefined ? undefined : 800,
                 height: this.urlParams.hideOptions !== undefined ? undefined : 400,

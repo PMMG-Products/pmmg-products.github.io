@@ -110,9 +110,14 @@ export async function getData(loadedData: any, dataType: string, month?: string)
 		case "prod":
 		case "company":
 		case "base":
+		case "ship":
 			if(!loadedData[dataType + '-data-' + month])
 			{
-				loadedData[dataType + '-data-' + month] = await fetch('data/' + dataType + '-data-' + month + '.json?cb=' + Date.now()).then(response => response.json());
+				const response = await fetch('data/' + dataType + '-data-' + month + '.json?cb=' + Date.now())
+				if(response.status == 200)
+				{
+					loadedData[dataType + '-data-' + month] = response.json();
+				}
 			}
 			return loadedData[dataType + '-data-' + month];
 		case "knownCompanies":

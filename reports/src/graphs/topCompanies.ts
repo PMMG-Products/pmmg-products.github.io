@@ -26,7 +26,7 @@ export class TopCompanies implements Graph {
             clearChildren(configDiv);
         }
 
-        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases"], values: ["volume", "profit", "bases"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
+        configDiv?.appendChild(addConfigField("select", "metric", "Metric: ", {prettyValues: ["Volume", "Profit", "Bases", "Ships"], values: ["volume", "profit", "bases", "ships"]}, useURLParams ? this.urlParams.metric : undefined, updateFunc));
         configDiv?.appendChild(addConfigField("select", "group", "Group: ", {prettyValues: ["By Company", "By Corporation"], values: ["company", "corp"]}, useURLParams ? this.urlParams.group : undefined, updateFunc));
         configDiv?.appendChild(addConfigField("select", "month", "Month: ", {prettyValues: monthsPretty, "values": months}, useURLParams && this.urlParams.month ? this.urlParams.month : months[months.length - 1], updateFunc));
         
@@ -35,12 +35,31 @@ export class TopCompanies implements Graph {
     async generatePlot(configValues: any, plotContainerID: string)
     {
         // Get Data
-        const companyData = await getData(this.loadedData, configValues.metric == "bases" ? "base" : "company", configValues.month);
+        var fileName;
+        switch(configValues.metric)
+        {
+            case "bases":
+                fileName = "base"
+                break;
+            case "ships":
+                fileName = "ship"
+                break;
+            default:
+                fileName = "company"
+        }
+        const companyData = await getData(this.loadedData, fileName, configValues.month);
         const knownCompanies = await getData(this.loadedData, "knownCompanies");
-        const dataset = configValues.metric == "bases" ? companyData : companyData.totals;
+        const dataset = configValues.metric == "bases" || configValues.metric == "ships" ? companyData : companyData.totals;
 
         var companyNames;
         var volumes;
+
+        // Return if company data not defined for that month
+        if(!companyData)
+        {
+            console.error("Data type not defined for this month.")
+            return;
+        }
 
         // Agglomerate corporations
         if(configValues.group == 'corp')
@@ -121,7 +140,7 @@ export class TopCompanies implements Graph {
                     range: [-0.5, 29.5]
                 },
                 yaxis: {
-                    title: {text: configValues.metric == "bases" ? "Bases" : prettyModeNames[configValues.metric] + ' [$/day]'},
+                    title: {text: prettyModeNames[configValues.metric] + (configValues.metric == 'bases' || configValues.metric == 'ships' ? '' : ' [$/day]')},
                     range: [0, null]
                 }
             }, {})
